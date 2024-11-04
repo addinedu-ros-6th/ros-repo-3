@@ -1,0 +1,40 @@
+# my_bridge.yaml
+
+name: my_bridge
+from_domain: 2
+to_domain: 0
+topics:
+  send_chatter_to_somewhere:
+    type: std_msgs/msg/String
+    remap: moni_bot_controller
+    from_domain: 2
+    to_domain: 0
+  
+  send_chatter_to_somewhere_else:
+    type: std_msgs/msg/String
+    remap: moni_bot_contoller/pub2
+    from_domain: 2
+    to_domain: 66
+
+  send_chatter_to_somewhere_different:
+    type: std_msgs/msg/String
+    remap: moni_bot_contoller/pub3
+    from_domain: 2
+    to_domain: 67
+
+  pollination_manager:
+    type: std_msgs/msg/String
+    from_domain: 1
+    to_domain: 0
+
+  pollitask_service:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 1
+  
+  applecare_service:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 2
+  
+
