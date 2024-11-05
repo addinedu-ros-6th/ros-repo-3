@@ -1,0 +1,77 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Selection
+    Name: Selection
+  - Class: rviz_common/Tool Properties
+    Name: Tool Properties
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: rviz_common/Time
+    Name: Time
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.03
+        Value: Lines
+      Name: Grid
+      Plane: XY
+      Reference Frame: map
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Enabled: true
+      Name: Robot Model
+      Robot Description: robot_description
+    - Class: rviz_default_plugins/Map
+      Enabled: true
+      Name: Map
+      Topic: /map
+    - Class: rviz_default_plugins/Odometry
+      Enabled: true
+      Name: Odometry
+      Topic: /odom
+    - Class: rviz_default_plugins/LaserScan
+      Enabled: true
+      Name: LaserScan
+      Topic: /scan
+    - Class: rviz_default_plugins/Path
+      Enabled: true
+      Name: Path
+      Topic: /plan
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: Waypoints
+      Topic: /waypoints
+  Global Options:
+    Fixed Frame: map
+    Background Color: 48; 48; 48
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+    - Class: rviz_default_plugins/SetInitialPose
+    - Class: rviz_default_plugins/PublishPoint
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 2.0
+      Focal Point:
+        X: 0.0
+        Y: 0.0
+        Z: 0.0
+      Pitch: -1.5708  # -90 degrees in radians
+      Yaw: 0.7853981633974483
+Window Geometry:
+  X: 100
+  Y: 100
+  Height: 720

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>turtlebot4_custom_controller</name>
+  <version>0.1.0</version>
+  <description>Custom controller for TurtleBot4 without nav2 and amcl</description>
+
+  <maintainer email="your.email@example.com">Your Name</maintainer>
+  <license>Apache License 2.0</license>
+
+  <!-- Buildtool dependencies -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Build dependencies -->
+  <build_depend>rclpy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>tf2_ros</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>OpenCV</build_depend>
+  <build_depend>ament_index_python</build_depend>
+  <build_depend>yaml-cpp</build_depend>
+
+  <!-- Execution dependencies -->
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>python3</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+
+  <!-- Test dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
