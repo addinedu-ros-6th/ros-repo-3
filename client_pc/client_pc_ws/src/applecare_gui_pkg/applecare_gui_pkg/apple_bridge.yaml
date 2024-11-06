@@ -1,0 +1,42 @@
+# my_bridge_1_to_3.yaml
+
+name: my_bridge_1
+from_domain: 21
+to_domain: 23
+topics:
+  amcl_pose:
+    type: geometry_msgs/msg/PoseWithCovarianceStamped
+    remap: robot1/amcl_pose
+
+  map:
+    type: nav_msgs/msg/OccupancyGrid
+  
+  MultiSpawn_Client_Pub:
+    type: std_msgs/msg/String
+    from_domain: 77
+    to_domain: 20
+
+  return_topic:
+    type: std_msgs/msg/Int32
+    from_domain: 20
+    to_domain: 77
+
+  ClientRequestTopic:
+    type: applecare_msgs/msg/RequestTopic
+    from_domain: 77
+    to_domain: 20
+
+  ReturnTopic:
+    type: applecare_msgs/msg/ReturnTopic
+    from_domain: 20
+    to_domain: 77
+
+  FeedbackTopic:
+    type: applecare_msgs/msg/ReturnTopic
+    from_domain: 20
+    to_domain: 77
+  
+  ResultTopic:
+    type: applecare_msgs/msg/ReturnTopic
+    from_domain: 20
+    to_domain: 77
