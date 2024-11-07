@@ -1,0 +1,31 @@
+# pollibot.rviz: 기본 RViz 설정 파일
+Panels:
+  - Class: rviz/Displays
+    Name: Displays
+
+# RobotModel과 TF 플러그인 추가
+Displays:
+  - Class: rviz_default_plugins/RobotModel
+    Enabled: true
+    Name: RobotModel
+    Robot Description: robot_description
+    Root Link: base_link
+    TF Prefix: ""
+    Update Interval: 0.0
+
+  - Class: rviz_default_plugins/TF
+    Enabled: true
+    Name: TF
+    Show Axes: true
+    Show Names: false
+    Show Trail: false
+    Update Interval: 0.0
+
+# RViz 기본 설정
+Visualization Manager:
+  Class: ""
+  Name: "Root"
+  Displays:
+    - Class: rviz/Displays
+      Name: Displays
+
