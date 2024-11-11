@@ -67,9 +67,14 @@ class DB_manager_server(Node):
 
         response.success = True
         result_list = []
+        # if db_result is not None:
+        #     for result in db_result:
+        #         result_list.append(str(result))
         if db_result is not None:
+        # Decimal 값을 문자열로 변환하여 "(1,0)" 형태로 result_list에 추가
             for result in db_result:
-                result_list.append(str(result))
+                result_str = f"({','.join(str(item) for item in result)})"  # db의 데이터 타입(Decimal)을 문자열로 변환, 안하면 (Decimal(1),Decimal(2)) 이렇게 나옴
+                result_list.append(result_str)
         print("%%%%%%%%%%%%%%%%%")
         print(result_list)
         response.result_list = result_list
@@ -78,9 +83,12 @@ class DB_manager_server(Node):
 
     def search_from_db(self,table,column,where):
         print("search from db")
-        self.cursor.execute(f"SELECT {column} from {table} {where}")
+        self.cursor.execute(f"SELECT {column} from {table} {where};")
         # self.cursor.execute("select * from Task")
         db_result = self.cursor.fetchall()
+        print("%%%%%%%%%%%55")
+        print(db_result)
+        print("$$$$$$$$$$$")
         return db_result
         # print(command)
 
