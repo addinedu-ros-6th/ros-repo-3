@@ -1,19 +1,21 @@
 from rclpy.node import Node
 import rclpy
 from example_interfaces.msg import String
-from example_interfaces.msg import Int32
+from std_msgs.msg import Int32
 from applecare_msgs.srv import DBCommand
 from applecare_msgs.msg import TaskRequest
 # from task_topic_subscriber_class import TaskTopicSubscriber
 from datetime import datetime
 import ast
 
+import time
 class TaskManager(Node):
     def __init__(self):
         super().__init__('task_manager_node')
         self.task_subscriber = self.create_subscription(TaskRequest,'gui/task_topic',self.task_topic_callback,10)
         self.task_publisher_to_monibot1 = self.create_publisher(Int32,'monibot/task',10)
-        self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'pollibot/task',10)
+        # self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'pollibot/task',10)
+        self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'zone_selection',10)
         self.task_msg_data = None
 
         self.dbmanager_client = self.create_client(DBCommand,'/DB_server')
@@ -165,9 +167,19 @@ class TaskManager(Node):
         
 
         if robot_id == 2:
-            # task_command = Int32()
-            # task_command.data = self.command_to_robot
+            task_command = Int32()
+            task_command.data = self.command_to_robot
+            while not self.task_publisher_to_pollibot1.get_subscription_count():
+                rclpy.spin_once(self, timeout_sec=0.1)
+                time.sleep(0.5)
+                print(self.task_publisher_to_pollibot1.get_subscription_count())
             self.task_publisher_to_pollibot1.publish(task_command)
+            self.task_publisher_to_pollibot1.wait_for_all_acked()
+            # for i in range(20):
+            #     self.task_publisher_to_pollibot1.publish(task_command)
+            #     print(task_command)
+            #     time.sleep(0.2)
+
             print("&&&&&&&&&&&&&&7")
             print(task_command)
             print("%%%%%%%%%%%%%%%%")
