@@ -29,8 +29,10 @@ class DB_manager_server(Node):
                     user='root',
                     password='1',
 
-                    database='AppleCareDB'
+                    # database='AppleCareDB'
+                    database='FarmManagement'
                 )
+            # self.cursor = self.connection.cursor(buffer=True)
             self.cursor = self.connection.cursor()
             print(f"DB Connection Success")
             self.connection_to_database = True
@@ -40,24 +42,53 @@ class DB_manager_server(Node):
 
     def execute_command(self,request,response):
         # 만약 request 형태 DBCommand.srv 참조, string command
-        cc=request.cc
-        command = request.command
-        if cc == 1:
-            self.db_command_execute1(command)
-        elif cc == "SOMETHING2":
-            self.db_command_execute2()
-        self.get_logger().info(f"DB 명령수신: {command}")
+        # -------------------------------------
+        # tmp request data
+        # request = DBCommand.Request()
+        # request.cc = 0
+        # request.table = "RobotStatus"
+        # request.column = "status"
+        # request.where = "where robot_id = 2 and robot_type = 'moni'"
+        # -------------------------------------
+
+        cc=request.cc 
+        table = request.table
+        column = request.column
+        where = request.where
+        value = request.value #sql query
+        if cc == 0:
+            db_result=self.search_from_db(table,column,where)
+        elif cc == 1:
+            db_result=self.insert_to_db(table,column,value)
+        # self.get_logger().info(f"DB 명령수신: {command}")
+
+        print("#########################")
+        print(db_result)
 
         response.success = True
-        response.message = "DB 작업 성공"
+        result_list = []
+        if db_result is not None:
+            for result in db_result:
+                result_list.append(str(result))
+        print("%%%%%%%%%%%%%%%%%")
+        print(result_list)
+        response.result_list = result_list
+        print(response)
         return response
 
-    def db_command_execute1(self,command):
-        print("db_execute1")
+    def search_from_db(self,table,column,where):
+        print("search from db")
+        self.cursor.execute(f"SELECT {column} from {table} {where}")
+        # self.cursor.execute("select * from Task")
+        db_result = self.cursor.fetchall()
+        return db_result
         # print(command)
 
-    def db_command_execute2(self):
-        print("db_execute2")
+    def insert_to_db(self,table,column,value):
+        print("insert to db")
+        self.cursor.execute(f"insert into {table} {column} values {value};")
+        self.connection.commit()
+        return None
 
 def main():
     try:
@@ -65,6 +96,7 @@ def main():
         db_server = DB_manager_server()
         rclpy.spin(db_server)
     finally:
+        db_server.connection.close()
         db_server.destroy_node()
         rclpy.shutdown()
 
