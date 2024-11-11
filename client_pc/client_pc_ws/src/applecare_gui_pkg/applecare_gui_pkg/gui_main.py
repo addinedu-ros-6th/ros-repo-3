@@ -30,6 +30,7 @@ sys.path.append(relative_path)
 
 from gui_import_class.video_subscriber import ImageSubscriber
 from gui_import_class.video_subscriber import amclSubscriber
+from gui_import_class.topic_publisher_node import GuiTopicPublisher
 # print(sys.path)
 class MessageReceiver(QThread):
     received = pyqtSignal(bytes)
@@ -57,10 +58,12 @@ class MessageReceiver(QThread):
             print(f"메시지 수신 오류: {e}")
 
 class OrchardGUI(QMainWindow):
-    def __init__(self,video_node=None,amcl_node=None):
+    def __init__(self,video_node=None,amcl_node=None, publish_node=None):
         self.connection_to_database = False
         self.video_node = video_node
         self.amcl_node = amcl_node
+        self.publish_node = publish_node
+        self.weather_internet = True # 인터넷 불가 대비용 플래그
         super(OrchardGUI, self).__init__()
         # Load the sidebar UI
         # uic.loadUi("/home/ksm/ws/MLDL/projects/group_pollination/src/gui_test/sidebar.ui", self)
@@ -137,7 +140,7 @@ class OrchardGUI(QMainWindow):
         self.onoff_schedule()
         # -------------------------------------------------------------------------
         # 타이머 관리
-        self.init_timers(self.get_weather_data, 30000) # 날씨 타이머
+        self.init_timers(self.get_weather_data, 300000) # 날씨 타이머
         self.init_timers(self.update_dynamic_plot, 1000) # 다이나믹 플롯 타이머
         self.init_timers(self.add_pie_chart, 86400000) #파이차트 타이머
         self.init_timers(self.tree_labels, 10000) # 트리 라벨 타이머
@@ -151,6 +154,7 @@ class OrchardGUI(QMainWindow):
         self.pixmap = QPixmap()
         self.video_timer = QTimer(self)
         self.video_timer.timeout.connect(self.update_video)
+        #-------------------------------------------------------------------------------
 
         # -------------------------------------------------------------------------------
         # 테스트 관리용 위젯
@@ -165,6 +169,7 @@ class OrchardGUI(QMainWindow):
         # 홈 화면 모니봇 상태 표시용 라벨/ 이미지로 대체해야함
         self.home_monibot_state_label.setText("normal")
 
+
         # ------------------------------------------------------------
         # test log page
         self.test_log_btn.clicked.connect(self.switch_to_test_log)
@@ -176,9 +181,56 @@ class OrchardGUI(QMainWindow):
         self.area_log_show_box.setColumnWidth(3, 209) 
         
         self.search_log_btn.clicked.connect(self.search_area_log)
-        
 
-    
+        self.task_upload_btn.clicked.connect(self.upload_task)
+        
+    def upload_task(self):
+        task_type = self.reserve_type_combo.currentText()
+        if task_type == 'scan':
+            task_type = 0
+        else:
+            task_type = 1
+
+
+        try:
+            A_sequence = int(self.A_sequence.text())
+        except:
+            A_sequence = None
+
+        try:
+            B_sequence = int(self.B_sequence.text())
+        except:
+            B_sequence = None
+        print("#########################################")
+        print(self.send_now.isChecked())
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        if self.send_now.isChecked():
+            instant_task= True
+            year = None
+            month = None
+            day = None
+            hour = None
+            minute = None
+        else:
+            instant_task = False
+            fulldate = self.reserve_date.date()
+            year = fulldate.year()
+            month = fulldate.month()
+            day = fulldate.day()
+
+            time = self.reserve_time.time()
+            hour = time.hour()
+            minute = time.minute()
+        
+        self.publish_node.publish_topic(topic_name="task_topic",task_type=task_type, 
+                                        area=None,priority_area=None,
+                                        instant_task = instant_task,
+                                        A_sequence=A_sequence,
+                                        B_sequence=B_sequence,
+                                        year=year,month=month,day=day,
+                                        hour=hour, minute=minute) # task_type 0: scan, 1: pollinate
+        
+        
     def update_amcl(self):
         amcl= self.amcl_node.get_pose()
         if amcl is not None:
@@ -415,12 +467,14 @@ class OrchardGUI(QMainWindow):
         # self.init_timers(self.add_pie_chart, 86400000)
 
     def get_weather_data(self):
+        if self.weather_internet == False:
+            return
         try:
             city = "Seoul"
             url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={self.api_key}&units=metric"
             response = requests.get(url)
             data = response.json()
-
+            print(response.status_code)
             if response.status_code == 200:
                 icon_id = data['weather'][0]['icon']
                 temperature = data['main']['temp']
@@ -460,8 +514,12 @@ class OrchardGUI(QMainWindow):
 
             else:
                 self.weather_label.setText("Error fetching weather data.")
+                current_year,current_month,current_date,current_hour,current_minute = "-","-","-","-","-"
         except Exception as e:
             self.weather_label.setText(f"Failed to fetch weather data: {str(e)}")
+            current_year,current_month,current_date,current_hour,current_minute = "-","-","-","-","-"
+            self.weather_internet = False
+            print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5")
         
         # self.init_timers(self.get_weather_data, 30000)
 
@@ -666,13 +724,17 @@ class OrchardGUI(QMainWindow):
         #     self.scanstart_btn.setEnabled(False)
         # except Exception as e:
         #     print(f"Error sending messages: {e}")
-        
         print("scanstart")
+        work_area = self.scan_area_combo.currentText()
+        priority_area = self.scan_area_priority_combo.currentText()
+        self.publish_node.publish_topic(topic_name="task_topic",task_type=0, area=work_area,priority_area=priority_area) # task_type 0: scan, 1: pollinate
         # self.db_topic_publisher = self.create_publisher(RequestTopic,'ClientRequestTopic', 10)
         # or publish topic
     def send_polliControl(self):
         print("pollistart")
-        pass
+        work_area = self.polli_area_combo.currentText()
+        priority_area = self.polli_area_priority_combo.currentText()
+        self.publish_node.publish_topic(topic_name="task_topic",task_type=1, area=work_area,priority_area=priority_area)
     
     def process_received_message(self, data):
         print(f"received message: {data}")
@@ -1139,17 +1201,18 @@ def main():
         amclNode = amclSubscriber()
         # spin_amcl_thread_handle = threading.Thread(target=spin_thread, args=(amclNode,))
         # spin_amcl_thread_handle.start()
-
+        topicPublisher=GuiTopicPublisher()
         # MultiThreadedExecutor 생성
         executor = MultiThreadedExecutor()
         executor.add_node(Imagenode)
         executor.add_node(amclNode)
+        executor.add_node(topicPublisher)
         # 스레드 생성 및 실행
         spin_thread_handle = threading.Thread(target=spin_thread, args=(executor,))
         spin_thread_handle.start()
 
         app = QApplication([])
-        window = OrchardGUI(video_node=Imagenode,amcl_node=amclNode)
+        window = OrchardGUI(video_node=Imagenode,amcl_node=amclNode,publish_node=topicPublisher)
         window.show()
         app.exec_()
     finally:
