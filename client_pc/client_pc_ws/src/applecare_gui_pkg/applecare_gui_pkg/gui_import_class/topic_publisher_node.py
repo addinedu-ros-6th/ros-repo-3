@@ -3,6 +3,9 @@ import rclpy
 from example_interfaces.msg import String
 from applecare_msgs.msg import TaskRequest
 
+from applecare_msgs.srv import DBCommand
+import ast
+
 class GuiTopicPublisher(Node):
     def __init__(self):
         super().__init__('gui_topic_publisher_node')
@@ -11,6 +14,48 @@ class GuiTopicPublisher(Node):
             'task_topic': self.create_publisher(TaskRequest, 'gui/task_topic',10),
             # 'pollinate_topic': self.create_publisher(String, 'pollinate_topic',10)
         }
+        self.dbmanager_client = self.create_client(DBCommand,'/DB_server')
+        while not self.dbmanager_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Service not available, waiting again...')
+        self.DBrequest = DBCommand.Request()
+
+    def request_DB_data(self,cc,table,column, where=None, value = None):
+        self.DBrequest.cc = cc
+        self.DBrequest.table = table
+        self.DBrequest.column = column
+        if where != None:
+            self.DBrequest.where = where
+        if value != None:
+            self.DBrequest.value = value
+
+        response = self.dbmanager_client.call(self.DBrequest)
+
+        self.result_list=[]
+        if response.success == True:
+            if response.result_list is not None:
+                print("#######################33")
+                print(response.result_list)
+                self.result_list = [list(ast.literal_eval(item)) for item in response.result_list]
+                print(self.result_list)
+        else:
+            print("response FAILED")
+
+        return self.result_list
+        # future = self.dbmanager_client.call(self.DBrequest)
+        # future.add_done_callback(self.DB_response_callback)
+    
+    # 비동기 방식의 요청 일때의 함수
+    # function for call_async
+    def DB_response_callback(self,future):
+        self.result_list=[]
+        try:
+            response = future.result()
+            if response.success == True:
+                if response.result_list is not None:
+                        self.result_list = [list(ast.literal_eval(item)) for item in response.result_list]
+                        print(self.result_list)
+        except Exception as e:
+            self.get_logger().error(f"Response call failed: {e}")
 
     def publish_topic(self,topic_name,task_type,area,
                       priority_area=None,
