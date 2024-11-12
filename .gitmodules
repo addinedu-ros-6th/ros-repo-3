@@ -1,0 +1,3 @@
+[submodule "moni_bot/pinkbot/src/pinklab_minibot_robot"]
+	path = moni_bot/pinkbot/src/pinklab_minibot_robot
+	url = https://github.com/byeongkyu/pinklab_minibot_robot.git
