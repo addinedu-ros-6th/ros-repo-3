@@ -11,9 +11,6 @@ find_package(rclcpp REQUIRED)       # For C++ nodes
 find_package(rclpy REQUIRED)        # For Python nodes
 find_package(std_msgs REQUIRED)     # Replace with your message dependencies
 
-# Add C++ executable
-# add_executable(depthcam_pub src/depthcam_pub.cpp)
-# ament_target_dependencies(depthcam_pub rclcpp std_msgs)
 
 add_executable(pointcloud_generator src/pointcloud_generator.cpp)
 target_link_libraries(pointcloud_generator realsense2 boost_system ${OpenCV_LIBRARIES})
@@ -27,8 +24,6 @@ install(TARGETS
 )
 
 # Install Python nodes
-ament_python_install_package(${PROJECT_NAME})
-
 install(PROGRAMS
   src/raw_ebimu_pub.py
   DESTINATION lib/${PROJECT_NAME}
