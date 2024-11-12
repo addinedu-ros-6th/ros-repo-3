@@ -1,5 +1,8 @@
+# cmake_policy(SET CMP0072 OLD)
+set(OpenGL_GL_PREFERENCE "LEGACY")
+
 cmake_minimum_required(VERSION 3.8)
-project(pollitask_service)
+project(3d_pose_estimator)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -12,24 +15,13 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-#add_executable(trajectory_planner src/trajectory_planner.cpp)
-#ament_target_dependencies(trajectory_planner rclcpp std_msgs geometry_msgs)
 
-#add_executable(3d_pose_estimator src/3d_pose_estimator.cpp)
-#ament_target_dependencies(3d_pose_estimator rclcpp std_msgs geometry_msgs)
-
-add_executable(pollitask_service src/pollitask_service.cpp)
-ament_target_dependencies(pollitask_service rclcpp std_msgs)
-
-#install(TARGETS
-#  trajectory_planner
-#  3d_pose_estimator
-#  pollitask_service
-#  DESTINATION lib/${PROJECT_NAME}
-#)
+add_executable(pointcloud_processor src/pointcloud_processor.cpp)
+ament_target_dependencies(pointcloud_processor rclcpp sensor_msgs)
+target_link_libraries(pointcloud_processor OpenGL::GL GLUT::GLUT)
 
 install(TARGETS
-  pollitask_service
+  pointcloud_processor
   DESTINATION lib/${PROJECT_NAME}
 )
 

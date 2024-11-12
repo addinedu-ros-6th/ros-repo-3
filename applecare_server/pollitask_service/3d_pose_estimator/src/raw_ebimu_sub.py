@@ -17,11 +17,11 @@ def data_parser(msg_data):
 class EbimuSubscriber(Node):
 
 	def __init__(self):
-		super().__init__('ebimu_subscriber')
+		super().__init__('raw_ebimu_subscriber')
 		qos_profile = QoSProfile(depth=10)
 		qos_profile.reliability = ReliabilityPolicy.BEST_EFFORT
 		#qos_profile.reliability = ReliabilityPolicy.KeepLast
-		self.subscription = self.create_subscription(String, 'ebimu_data', self.callback, qos_profile)
+		self.subscription = self.create_subscription(String, 'raw_imu', self.callback, qos_profile)
 		self.subscription   # prevent unuse variable warning
 
 	def callback(self, msg):
