@@ -28,8 +28,8 @@ def generate_launch_description():
         # ROS2 node for the publishing raw imu
         Node(
             package='pollination_manager',
-            executable='ebimu_pub',
-            name='ebimu_publisher',
+            executable='raw_ebimu_publisher',
+            name='raw_ebimu_pub',
             output='screen'
         )
     ])

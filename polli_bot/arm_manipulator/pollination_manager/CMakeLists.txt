@@ -15,8 +15,8 @@ find_package(std_msgs REQUIRED)     # Replace with your message dependencies
 # add_executable(depthcam_pub src/depthcam_pub.cpp)
 # ament_target_dependencies(depthcam_pub rclcpp std_msgs)
 
-add_executable(generator src/pointcloud_generator.cpp)
-target_link_libraries(generator realsense2 boost_system ${OpenCV_LIBRARIES})
+add_executable(pointcloud_generator src/pointcloud_generator.cpp)
+target_link_libraries(pointcloud_generator realsense2 boost_system ${OpenCV_LIBRARIES})
 
 
 # Install C++ node
@@ -30,7 +30,7 @@ install(TARGETS
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
-  src/ebimu_pub.py
+  src/raw_ebimu_pub.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
