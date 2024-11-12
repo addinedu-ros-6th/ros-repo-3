@@ -1,0 +1,62 @@
+# main_server_bridge.yaml
+
+name: main_server_bridge
+from_domain: 100
+to_domain: 101
+topics:
+  # turtlebot4 서버에서 main server로 전달되는 토픽
+  amcl_pose:
+    type: geometry_msgs/msg/PoseWithCovarianceStamped
+    remap: pollibot/amcl_pose
+    from_domain: 101
+    to_domain: 100
+
+  goal_reached:
+    type: geometry_msgs/msg/PoseStamped
+    remap: goal_reached
+    from_domain: 101
+    to_domain: 100
+    
+  forwarded_tree_image:
+    type: sensor_msgs/msg/CompressedImage
+    remap: forwarded_tree_image
+    from_domain: 101
+    to_domain: 100
+
+  map:
+    type: nav_msgs/msg/OccupancyGrid
+    remap: map
+    from_domain: 101
+    to_domain: 100
+
+  # main server에서 turtlebot4 서버로 전달되는 토픽
+  goal_pose:
+    type: geometry_msgs/msg/PoseStamped
+    remap: goal_pose
+    from_domain: 100
+    to_domain: 101
+
+  initialpose:
+    type: geometry_msgs/msg/PoseWithCovarianceStamped
+    remap: initialpose
+    from_domain: 100
+    to_domain: 101
+
+  goal_stop:
+    type: std_msgs/msg/Bool
+    remap: goal_stop
+    from_domain: 100
+    to_domain: 101
+  
+  obstacle_stop_flag:
+    type: std_msgs/msg/Bool
+    remap: obstacle_stop_flag
+    from_domain: 100
+    to_domain: 101
+  
+
+  # pollibot/task:
+  #   type: geometry_msgs
+  #   remap: task
+  #   from_domain: 0
+  #   to_domain: 1
