@@ -1,5 +1,5 @@
 # cmake_policy(SET CMP0072 OLD)
-set(OpenGL_GL_PREFERENCE "LEGACY")
+set(OpenGL_GL_PREFERENCE "LEGACY") # for visualizing via GL
 
 cmake_minimum_required(VERSION 3.8)
 project(3d_pose_estimator)
@@ -15,7 +15,8 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-
+# Install C++ nodes
+# currently, dont need this as we'll be using UDP to send the pointcloud data
 add_executable(pointcloud_processor src/pointcloud_processor.cpp)
 ament_target_dependencies(pointcloud_processor rclcpp sensor_msgs)
 target_link_libraries(pointcloud_processor OpenGL::GL GLUT::GLUT)
@@ -26,15 +27,15 @@ install(TARGETS
 )
 
 # Install Python nodes
-ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
-  src/ebimu_sub.py
+  src/raw_ebimu_sub.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
+# currently, dont need this as we'll be using UDP to send the raw rgb and depth frames data
 install(PROGRAMS
-  src/depthcam_sub.py
+  src/frame_sub.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
