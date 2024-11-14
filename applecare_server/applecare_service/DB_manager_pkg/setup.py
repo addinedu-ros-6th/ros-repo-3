@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'DB_manager = DB_manager_pkg.DB_manager:main',
         ],
     },
 )

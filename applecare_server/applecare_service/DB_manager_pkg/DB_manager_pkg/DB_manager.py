@@ -1,7 +1,7 @@
 from rclpy.node import Node
 import rclpy
-# from applecare_msgs.srv import DBCommand # DB용 service에 정의필요
-from gui_manager_msgs.srv import DBCommand
+from applecare_msgs.srv import DBCommand # DB용 service에 정의필요
+# from gui_manager_msgs.srv import DBCommand
 import mysql.connector
 
 class DB_manager_server(Node):

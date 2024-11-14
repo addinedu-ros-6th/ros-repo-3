@@ -1,0 +1,5 @@
+int32 cc
+string query
+---
+bool success
+string[] result_list

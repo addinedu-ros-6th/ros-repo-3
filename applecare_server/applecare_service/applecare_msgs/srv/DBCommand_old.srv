@@ -1,0 +1,8 @@
+int32 cc
+string table
+string column
+string where
+string value
+---
+bool success
+string[] result_list
