@@ -1,7 +1,7 @@
 from rclpy.node import Node
 import rclpy
-from applecare_msgs.srv import DBCommand # DB용 service에 정의필요
-# from gui_manager_msgs.srv import DBCommand
+# from applecare_msgs.srv import DBCommand # DB용 service에 정의필요
+from gui_manager_msgs.srv import DBCommand
 import mysql.connector
 
 class DB_manager_server(Node):
@@ -14,7 +14,18 @@ class DB_manager_server(Node):
 
         # login to applecare DB
         self.connect_to_database()
+    
+        self.test_flag = True
+        self.test_timer = self.create_timer(5,self.change_robot_status_test)
 
+    def change_robot_status_test(self):
+        if self.test_flag==True:
+            query="update Task set robot_id = null where task_id =36;"
+        else:
+            query="update Task set robot_id = 1 where task_id =36;"
+        self.cursor.execute(query)
+        self.connection.commit()
+        self.test_flag = not self.test_flag
     # DB login function
     def connect_to_database(self):
         if not self.connection_to_database:

@@ -98,8 +98,8 @@ class OrchardGUI(QMainWindow):
         # Setup hover menu for tree icons and update labels periodically
         self.tree_labels()
 
-        self.tree1_icon.installEventFilter(self)
-        self.tree2_icon.installEventFilter(self)
+        # self.tree1_icon.installEventFilter(self)
+        # self.tree2_icon.installEventFilter(self)
 
         self.pollination_rate()  # Call the method to update the UI
         self.scan_rate()
@@ -176,6 +176,9 @@ class OrchardGUI(QMainWindow):
         self.update_disease_state()
         self.update_pollinated_num()
 
+        self.get_robot_status()
+        self.init_timers(self.get_robot_status, 1000)
+
 
 
     def see_cctv(self):
@@ -183,24 +186,54 @@ class OrchardGUI(QMainWindow):
         popup = CctvViewer(self.video_node)
         popup.exec_()
 
-    def change_robot_status(self):
-        print("status flag =", self.monibot_status_flag)
-        # 현재 아이콘 상태에 따라 아이콘 변경
-        if self.monibot_status_flag == False:
-            # Normal On 상태로 변경
-            # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32), QIcon.Normal, QIcon.Off))
-            # self.monibot_test_icon.setIcon(QIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32))))
-            # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(32, 32, QIcon.Normal, QIcon.Off))
+    def get_robot_status(self):
+        query = """ SELECT 
+                    CASE 
+                        WHEN EXISTS 
+                        (SELECT 1 FROM Task WHERE robot_id = 1) THEN 1 
+                        ELSE 0   
+                        END AS result_1,
+                    CASE 
+                        WHEN EXISTS 
+                        (SELECT 1 FROM Task WHERE robot_id = 2) THEN  1
+                        ELSE 0  
+                        END AS result_2;
+                    """
+        response = self.gui_manager_node.request_DB_data(cc=0,query=query)
+        print("robot_status = ",response) # [['1','0']]
+        moni1_status = int(response[0][0])
+        polli1_status = int(response[0][1])
+        print("moni1_status",moni1_status)
+        print("polli1_status",polli1_status)
+        self.change_robot_status(moni1_status,polli1_status)
+
+    def change_robot_status(self,moni1_status,polli1_status):
+        if moni1_status == 1:
             self.monibot_test_icon.setEnabled(False)
-            # self.monibot_status_flag = True
         else:
-            # Normal Off 상태로 변경
-            # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32), QIcon.Normal, QIcon.Off))
-            # self.monibot_test_icon.setIcon(QIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32))))
-            # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(32, 32, QIcon.Normal, QIcon.On))
             self.monibot_test_icon.setEnabled(True)
-            # self.monibot_status_flag = False
-        self.monibot_status_flag = not self.monibot_status_flag
+        if polli1_status == 1:
+            self.pollibot_test_icon.setEnabled(False)
+        else:
+            self.pollibot_test_icon.setEnabled(True)
+        
+        # print("status flag =", self.monibot_status_flag)
+        # # 현재 아이콘 상태에 따라 아이콘 변경
+        # if self.monibot_status_flag == False:
+        #     # Normal On 상태로 변경
+        #     # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32), QIcon.Normal, QIcon.Off))
+        #     # self.monibot_test_icon.setIcon(QIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32))))
+        #     # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(32, 32, QIcon.Normal, QIcon.Off))
+        #     self.monibot_test_icon.setEnabled(False)
+        #     # self.monibot_status_flag = True
+        # else:
+        #     # Normal Off 상태로 변경
+        #     # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32), QIcon.Normal, QIcon.Off))
+        #     # self.monibot_test_icon.setIcon(QIcon(self.monibot_test_icon.icon().pixmap(QSize(32, 32))))
+        #     # self.monibot_test_icon.setIcon(self.monibot_test_icon.icon().pixmap(32, 32, QIcon.Normal, QIcon.On))
+        #     self.monibot_test_icon.setEnabled(True)
+        #     # self.monibot_status_flag = False
+        # self.monibot_status_flag = not self.monibot_status_flag
     
     def upload_task(self):
         task_type = self.reserve_type_combo.currentText()
@@ -706,49 +739,49 @@ class OrchardGUI(QMainWindow):
         # self.init_timers(self.tree_labels, 10000)
 
 
-    def eventFilter(self, source, event):
-        combined_results = self.retrieve_from_database()  # Get the tree data from the database
+    # def eventFilter(self, source, event):
+    #     combined_results = self.retrieve_from_database()  # Get the tree data from the database
 
-        if event.type() == QEvent.Enter:
-            if source == self.tree1_icon:
-                tree_no = 1
-            elif source == self.tree2_icon:
-                tree_no = 2
-            else:
-                return super().eventFilter(source, event)
+    #     if event.type() == QEvent.Enter:
+    #         if source == self.tree1_icon:
+    #             tree_no = 1
+    #         elif source == self.tree2_icon:
+    #             tree_no = 2
+    #         else:
+    #             return super().eventFilter(source, event)
 
-            # Find the correct data for the hovered tree
-            tree_data = next((tree for tree in combined_results if tree[0] == tree_no), None)
+    #         # Find the correct data for the hovered tree
+    #         tree_data = next((tree for tree in combined_results if tree[0] == tree_no), None)
 
-            if tree_data:
-                tree_id = tree_data[0]
-                x_axis = tree_data[1]
-                y_axis = tree_data[2]
-                flower_count = tree_data[3]
-                bud_count = tree_data[4]
-                pollination_count = tree_data[5]
-                season = tree_data[6]
-                plant_date = tree_data[7]
-                update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    # 나무 위치 없어도 됨, 
-                label_text = f"""
-                    <p style="font-size: 17px; font-weight: bold;">사과나무 정보</p>
-                    <p>꽃 개화 상태: {flower_count}/{flower_count + bud_count + pollination_count}</p>
-                    <p>나무 식별번호: {tree_id}</p>
-                    <p>나무 위치: ({x_axis}, {y_axis})</p>
-                    <p>심은 일자: {plant_date}</p>
-                    <p>시즌: {season}</p>
-                    <p style="font-size: 9px; text-align: right;">마지막 업데이트: {update_date}</p>
-                """
+    #         if tree_data:
+    #             tree_id = tree_data[0]
+    #             x_axis = tree_data[1]
+    #             y_axis = tree_data[2]
+    #             flower_count = tree_data[3]
+    #             bud_count = tree_data[4]
+    #             pollination_count = tree_data[5]
+    #             season = tree_data[6]
+    #             plant_date = tree_data[7]
+    #             update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #                 # 나무 위치 없어도 됨, 
+    #             label_text = f"""
+    #                 <p style="font-size: 17px; font-weight: bold;">사과나무 정보</p>
+    #                 <p>꽃 개화 상태: {flower_count}/{flower_count + bud_count + pollination_count}</p>
+    #                 <p>나무 식별번호: {tree_id}</p>
+    #                 <p>나무 위치: ({x_axis}, {y_axis})</p>
+    #                 <p>심은 일자: {plant_date}</p>
+    #                 <p>시즌: {season}</p>
+    #                 <p style="font-size: 9px; text-align: right;">마지막 업데이트: {update_date}</p>
+    #             """
 
-                self.menu_label.setText(label_text)
-                self.menu_label.setFont(QFont("NanumSquareRound ExtraBold"))
-                self.menu.exec_(source.mapToGlobal(source.rect().bottomLeft()))
+    #             self.menu_label.setText(label_text)
+    #             self.menu_label.setFont(QFont("NanumSquareRound ExtraBold"))
+    #             self.menu.exec_(source.mapToGlobal(source.rect().bottomLeft()))
 
-        elif event.type() == QEvent.Leave:
-            self.menu.hide()
+    #     elif event.type() == QEvent.Leave:
+    #         self.menu.hide()
 
-        return super().eventFilter(source, event)
+    #     return super().eventFilter(source, event)
 
     
     def pollination_rate(self):
