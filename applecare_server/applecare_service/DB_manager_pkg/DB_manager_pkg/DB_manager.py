@@ -26,6 +26,12 @@ class DB_manager_server(Node):
         self.cursor.execute(query)
         self.connection.commit()
         self.test_flag = not self.test_flag
+
+
+        self.cursor.execute("select robot_id from Task where task_id = 36;")
+        db_result = self.cursor.fetchall()
+        print(db_result)
+        print("--------------------------")
     # DB login function
     def connect_to_database(self):
         if not self.connection_to_database:
