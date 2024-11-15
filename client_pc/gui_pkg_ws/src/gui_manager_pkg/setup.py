@@ -6,16 +6,19 @@ setup(
     name=package_name,
     version='0.0.0',
     packages=find_packages(exclude=['test']),
-    # package_data={
-    #     'gui_manager_pkg': ['test_gui.ui'],
-    # },
+    package_data={
+        'gui_manager_pkg': ['test_gui.ui'],
+    },
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', 
          glob.glob(os.path.join('launch','*.launch.py'))),
-        #  ('share/'+ package_name,glob.glob('*.ui'))
+        #  ('share/'+ package_name, )
+        (os.path.join('share',package_name,'images'),[
+            'resource/images/apple.png'
+        ])
     ],
     install_requires=['setuptools'],
     zip_safe=True,

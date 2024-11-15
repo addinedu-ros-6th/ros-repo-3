@@ -157,7 +157,7 @@ QPushButton:checked{
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources_test.qrc">
+            <iconset>
              <normaloff>:/test_sources/robot_page_icon2.png</normaloff>
              <normalon>:/test_sources/robot_page_icon.png</normalon>:/test_sources/robot_page_icon2.png</iconset>
            </property>
@@ -377,7 +377,7 @@ QPushButton:checked{
             <string>Map</string>
            </property>
            <property name="icon">
-            <iconset resource="resources_test.qrc">
+            <iconset>
              <normaloff>:/test_sources/robot_page_icon2.png</normaloff>
              <normalon>:/test_sources/robot_page_icon.png</normalon>:/test_sources/robot_page_icon2.png</iconset>
            </property>
@@ -507,7 +507,7 @@ QPushButton:checked{
 background-color: rgb(201, 195, 191);</string>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="mainboard_page">
           <widget class="QGroupBox" name="weather_groupbox">
@@ -1402,7 +1402,7 @@ background-color: rgba(191, 64, 64, 0);
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="resources_test.qrc">:/test_sources/map_big_scale.png</pixmap>
+            <pixmap>:/test_sources/map_big_scale.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1463,7 +1463,7 @@ background-color: rgba(191, 64, 64, 0);</string>
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources_test.qrc">
+            <iconset>
              <normaloff>:/test_sources/Untitled.png</normaloff>:/test_sources/Untitled.png</iconset>
            </property>
            <property name="iconSize">
@@ -1490,7 +1490,7 @@ background-color: rgba(191, 64, 64, 0);</string>
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources_test.qrc">
+            <iconset>
              <normaloff>:/test_sources/green.png</normaloff>
              <normalon>:/test_sources/Untitled.png</normalon>
              <disabledoff>:/test_sources/Untitled.png</disabledoff>
@@ -1865,7 +1865,7 @@ border-bottom-right-radius:20px;</string>
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources_test.qrc">
+              <iconset>
                <normaloff>:/test_sources/disease1.png</normaloff>:/test_sources/disease1.png</iconset>
              </property>
              <property name="iconSize">
@@ -1888,7 +1888,7 @@ border-bottom-right-radius:20px;</string>
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources_test.qrc">
+              <iconset>
                <normaloff>:/test_sources/disease2.png</normaloff>:/test_sources/disease2.png</iconset>
              </property>
              <property name="iconSize">
@@ -2029,7 +2029,7 @@ border-bottom-right-radius:20px;</string>
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources_test.qrc">
+              <iconset>
                <normaloff>:/test_sources/disease1.png</normaloff>:/test_sources/disease1.png</iconset>
              </property>
              <property name="iconSize">
@@ -2052,7 +2052,7 @@ border-bottom-right-radius:20px;</string>
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources_test.qrc">
+              <iconset>
                <normaloff>:/test_sources/disease2.png</normaloff>:/test_sources/disease2.png</iconset>
              </property>
              <property name="iconSize">
@@ -2141,7 +2141,7 @@ border-bottom-right-radius:20px;</string>
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="resources_test.qrc">
+             <iconset>
               <normaloff>:/test_sources/apple.png</normaloff>:/test_sources/apple.png</iconset>
             </property>
            </widget>
@@ -2270,7 +2270,7 @@ border-bottom-right-radius:20px;</string>
              <minute>0</minute>
              <second>0</second>
              <year>2024</year>
-             <month>11</month>
+             <month>12</month>
              <day>1</day>
             </datetime>
            </property>
@@ -2279,6 +2279,13 @@ border-bottom-right-radius:20px;</string>
            </property>
            <property name="calendarPopup">
             <bool>true</bool>
+           </property>
+           <property name="date">
+            <date>
+             <year>2024</year>
+             <month>12</month>
+             <day>1</day>
+            </date>
            </property>
           </widget>
           <widget class="QComboBox" name="disease_check_box_2">
@@ -2297,37 +2304,32 @@ border-bottom-right-radius:20px;</string>
            </item>
            <item>
             <property name="text">
-             <string>심각한병</string>
+             <string>human</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>그저그런병</string>
+             <string>success_flower</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>또뭐가있나병</string>
+             <string>fail_flower</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>고라니</string>
+             <string>disease1</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>인간</string>
+             <string>disease2</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>수분 실패</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>수분 성공</string>
+             <string>arrive</string>
             </property>
            </item>
           </widget>

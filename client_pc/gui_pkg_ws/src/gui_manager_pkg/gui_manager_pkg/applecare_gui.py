@@ -58,6 +58,7 @@ class OrchardGUI(QMainWindow):
         # package_share_directory = get_package_share_directory('gui_manager_pkg')
         # ui_file_path = os.path.join(package_share_directory, 'test_gui.ui')
         ui_file_path = pkg_resources.resource_filename('gui_manager_pkg', 'test_gui.ui')
+        print(ui_file_path)
         uic.loadUi(ui_file_path, self)
         self.setWindowTitle("New Apple Care")
         self.icon_name_widget.setHidden(True) # Hide an element (icon_name_widget)
@@ -98,8 +99,8 @@ class OrchardGUI(QMainWindow):
         # Setup hover menu for tree icons and update labels periodically
         self.tree_labels()
 
-        # self.tree1_icon.installEventFilter(self)
-        # self.tree2_icon.installEventFilter(self)
+        self.tree1_icon.installEventFilter(self)
+        self.tree2_icon.installEventFilter(self)
 
         self.pollination_rate()  # Call the method to update the UI
         self.scan_rate()
@@ -152,11 +153,11 @@ class OrchardGUI(QMainWindow):
         # test log page
         # self.test_log_btn.clicked.connect(self.switch_to_test_log)
         from PyQt5.QtWidgets import QHeaderView
-        # self.area_log_show_box.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        # self.area_log_show_box.setColumnWidth(0, 100)  # 첫 번째 열의 너비를 100으로 설정
-        # self.area_log_show_box.setColumnWidth(1, 150)  # 두 번째 열의 너비를 150으로 설정
-        # self.area_log_show_box.setColumnWidth(2, 150) 
-        # self.area_log_show_box.setColumnWidth(3, 209) 
+        # self.area_log_show_box_2.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.area_log_show_box_2.setColumnWidth(0, 100)  # 첫 번째 열의 너비를 100으로 설정
+        self.area_log_show_box_2.setColumnWidth(1, 180)  # 두 번째 열의 너비를 150으로 설정
+        self.area_log_show_box_2.setColumnWidth(2, 100) 
+        self.area_log_show_box_2.setColumnWidth(3, 190) 
         
         # self.search_log_btn.clicked.connect(self.search_area_log)
 
@@ -179,13 +180,72 @@ class OrchardGUI(QMainWindow):
         self.get_robot_status()
         self.init_timers(self.get_robot_status, 1000)
 
+        self.search_log_btn_2.clicked.connect(self.search_log_from_DB)
+        self.search_log_from_DB()
+        # self.area_log_show_box_2.resizeColumnsToContents()
+
+    def search_log_from_DB(self):
+        area= self.area_check_box_2.currentText()
+        if area == 'A':
+            area = '1'
+        elif area == 'B':
+            area = '2'
+        start_time = self.date_box_3.text()
+        end_time = self.date_box_2.text()
+        search_item = self.disease_check_box_2.currentText()
+        row_id = f"and row_id = {area} "
+        target_id = f"and target_type_name = '{search_item}' "
+        print(area,start_time,end_time,search_item)
+        query = f""" select case when row_id = 1 then 'A' else 'B' end as '구역', event_datetime as '날짜', 
+                        CASE 
+                            WHEN robot_x >= 0 AND robot_x < 10 AND robot_y >= 0 AND robot_y < 20 THEN 'A4'
+                            WHEN robot_x >= 10 AND robot_x < 20 AND robot_y >= 0 AND robot_y < 20 THEN 'A5'
+                            WHEN robot_x >= 20 AND robot_x <= 30 AND robot_y >= 0 AND robot_y < 20 THEN 'A6'
+                            WHEN robot_x >= 20 AND robot_x <= 30 AND robot_y >= 20 AND robot_y <= 40 THEN 'A1'
+                            WHEN robot_x >= 10 AND robot_x <= 20 AND robot_y >= 20 AND robot_y <= 40 THEN 'A2'
+                            WHEN robot_x >= 0 AND robot_x < 10 AND robot_y >= 20 AND robot_y <= 40 THEN 'A3'
+
+                            WHEN robot_x > 30 AND robot_x <= 40 AND robot_y >= 0 AND robot_y <= 20 THEN 'B4'
+                            WHEN robot_x > 40 AND robot_x <= 50 AND robot_y >= 0 AND robot_y <= 20 THEN 'B5'
+                            WHEN robot_x > 50 AND robot_x <= 60 AND robot_y >= 0 AND robot_y <= 20 THEN 'B6'
+                            WHEN robot_x > 50 AND robot_x <= 60 AND robot_y > 20 AND robot_y <= 40 THEN 'B1'
+                            WHEN robot_x > 40 AND robot_x <= 50 AND robot_y > 20 AND robot_y <= 40 THEN 'B2'
+                            WHEN robot_x > 30 AND robot_x <= 40 AND robot_y > 20 AND robot_y <= 40 THEN 'B3'
+                        END AS zone,
+                        target_type_name 
+                        from TaskEvent 
+                        left join Target_type on Target_type.target_type_id = TaskEvent.target_type_id
+                        where event_datetime between {start_time} and {end_time}
+                    """
+        if area != 'All':
+            query = query + row_id
+        if search_item != 'All':
+            query = query + target_id
+        query = query + "order by event_datetime desc;"
+        response = self.gui_manager_node.request_DB_data(cc=0,query=query)
+        print("hey im the real result!!!")
+        print(response)
+        self.area_log_show_box_2.setRowCount(0)
+        for row_number, row_data in enumerate(response):
+            self.area_log_show_box_2.insertRow(row_number)
+            for column_number, data in enumerate(row_data):
+                self.area_log_show_box_2.setItem(row_number, column_number, QTableWidgetItem(str(data)))
+
+        # for line in response:
+        #     print(line)
+        #     row = self.area_log_show_box_2.rowCount()
+        #     self.area_log_show_box_2.setItem(row,0,QTableWidgetItem(line[0]))
+        #     self.area_log_show_box_2.setItem(row,1,QTableWidgetItem(line[1]))
+        #     self.area_log_show_box_2.setItem(row,2,QTableWidgetItem(line[2]))
+        #     self.area_log_show_box_2.setItem(row,3,QTableWidgetItem(line[3]))
+        #     print(QTableWidgetItem(line[3]))
 
 
     def see_cctv(self):
 
         popup = CctvViewer(self.video_node)
         popup.exec_()
-
+    
     def get_robot_status(self):
         query = """ SELECT 
                     CASE 
@@ -216,6 +276,8 @@ class OrchardGUI(QMainWindow):
             self.pollibot_test_icon.setEnabled(False)
         else:
             self.pollibot_test_icon.setEnabled(True)
+
+        
         
         # print("status flag =", self.monibot_status_flag)
         # # 현재 아이콘 상태에 따라 아이콘 변경
@@ -508,7 +570,9 @@ class OrchardGUI(QMainWindow):
         self.total_pollinate_label.setText(str(total_pollinate_num))
         #size setting need3eed
         self.expected_apple_png.resize(total_pollinate_num*10,total_pollinate_num*10)
-        pixmap = QPixmap("./test_sources/apple.png")
+        package_share_directory = get_package_share_directory('gui_manager_pkg')
+        image_path = os.path.join(package_share_directory,'images','apple.png')
+        pixmap = QPixmap(image_path)
         print("size: ",self.expected_apple_png.size() )
         scaled_pixmap=pixmap.scaled(self.expected_apple_png.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.expected_apple_png.setPixmap(scaled_pixmap)
@@ -739,49 +803,49 @@ class OrchardGUI(QMainWindow):
         # self.init_timers(self.tree_labels, 10000)
 
 
-    # def eventFilter(self, source, event):
-    #     combined_results = self.retrieve_from_database()  # Get the tree data from the database
+    def eventFilter(self, source, event):
+        combined_results = self.retrieve_from_database()  # Get the tree data from the database
 
-    #     if event.type() == QEvent.Enter:
-    #         if source == self.tree1_icon:
-    #             tree_no = 1
-    #         elif source == self.tree2_icon:
-    #             tree_no = 2
-    #         else:
-    #             return super().eventFilter(source, event)
+        if event.type() == QEvent.Enter:
+            if source == self.tree1_icon:
+                tree_no = 1
+            elif source == self.tree2_icon:
+                tree_no = 2
+            else:
+                return super().eventFilter(source, event)
 
-    #         # Find the correct data for the hovered tree
-    #         tree_data = next((tree for tree in combined_results if tree[0] == tree_no), None)
+            # Find the correct data for the hovered tree
+            tree_data = next((tree for tree in combined_results if tree[0] == tree_no), None)
 
-    #         if tree_data:
-    #             tree_id = tree_data[0]
-    #             x_axis = tree_data[1]
-    #             y_axis = tree_data[2]
-    #             flower_count = tree_data[3]
-    #             bud_count = tree_data[4]
-    #             pollination_count = tree_data[5]
-    #             season = tree_data[6]
-    #             plant_date = tree_data[7]
-    #             update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #                 # 나무 위치 없어도 됨, 
-    #             label_text = f"""
-    #                 <p style="font-size: 17px; font-weight: bold;">사과나무 정보</p>
-    #                 <p>꽃 개화 상태: {flower_count}/{flower_count + bud_count + pollination_count}</p>
-    #                 <p>나무 식별번호: {tree_id}</p>
-    #                 <p>나무 위치: ({x_axis}, {y_axis})</p>
-    #                 <p>심은 일자: {plant_date}</p>
-    #                 <p>시즌: {season}</p>
-    #                 <p style="font-size: 9px; text-align: right;">마지막 업데이트: {update_date}</p>
-    #             """
+            if tree_data:
+                tree_id = tree_data[0]
+                x_axis = tree_data[1]
+                y_axis = tree_data[2]
+                flower_count = tree_data[3]
+                bud_count = tree_data[4]
+                pollination_count = tree_data[5]
+                season = tree_data[6]
+                plant_date = tree_data[7]
+                update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    # 나무 위치 없어도 됨, 
+                label_text = f"""
+                    <p style="font-size: 17px; font-weight: bold;">사과나무 정보</p>
+                    <p>꽃 개화 상태: {flower_count}/{flower_count + bud_count + pollination_count}</p>
+                    <p>나무 식별번호: {tree_id}</p>
+                    <p>나무 위치: ({x_axis}, {y_axis})</p>
+                    <p>심은 일자: {plant_date}</p>
+                    <p>시즌: {season}</p>
+                    <p style="font-size: 9px; text-align: right;">마지막 업데이트: {update_date}</p>
+                """
 
-    #             self.menu_label.setText(label_text)
-    #             self.menu_label.setFont(QFont("NanumSquareRound ExtraBold"))
-    #             self.menu.exec_(source.mapToGlobal(source.rect().bottomLeft()))
+                self.menu_label.setText(label_text)
+                self.menu_label.setFont(QFont("NanumSquareRound ExtraBold"))
+                self.menu.exec_(source.mapToGlobal(source.rect().bottomLeft()))
 
-    #     elif event.type() == QEvent.Leave:
-    #         self.menu.hide()
+        elif event.type() == QEvent.Leave:
+            self.menu.hide()
 
-    #     return super().eventFilter(source, event)
+        return super().eventFilter(source, event)
 
     
     def pollination_rate(self):
