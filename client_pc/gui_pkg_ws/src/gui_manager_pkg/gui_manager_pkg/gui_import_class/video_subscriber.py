@@ -73,18 +73,28 @@ class ImageSubscriber(Node):
 
     def listener_callback1(self, msg):
         # Convert ROS Image message to OpenCV image
-        self.current_frame1 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        # self.current_frame1 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
         # print(msg)
+        image_array = np.frombuffer(msg.data, np.uint8)
+        self.current_frame1 = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     def listener_callback2(self, msg):
         # Convert ROS Image message to OpenCV image
-        self.current_frame2 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        # self.current_frame2 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        
+        image_array = np.frombuffer(msg.data, np.uint8)
+        self.current_frame2 = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     def listener_callback3(self, msg):
         # Convert ROS Image message to OpenCV image
-        self.current_frame3 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        # self.current_frame3 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        
+        image_array = np.frombuffer(msg.data, np.uint8)
+        self.current_frame3 = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     def listener_callback4(self, msg):
         # Convert ROS Image message to OpenCV image
-        self.current_frame4 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        #self.current_frame4 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
 
+	image_array = np.frombuffer(msg.data, np.uint8)
+        self.current_frame4 = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     def get_frame1(self):
         return self.current_frame1
     def get_frame2(self):

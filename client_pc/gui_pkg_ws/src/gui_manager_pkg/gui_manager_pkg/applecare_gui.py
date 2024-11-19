@@ -97,7 +97,7 @@ class OrchardGUI(QMainWindow):
         self.percentage = round((self.pollination / self.total) * 100)
 
         # Setup hover menu for tree icons and update labels periodically
-        self.tree_labels()
+        # self.tree_labels()
 
         self.tree1_icon.installEventFilter(self)
         self.tree2_icon.installEventFilter(self)
@@ -121,7 +121,7 @@ class OrchardGUI(QMainWindow):
         self.init_timers(self.get_weather_data, 300000) # 날씨 타이머
         # self.init_timers(self.update_dynamic_plot, 1000) # 다이나믹 플롯 타이머
         self.init_timers(self.add_pie_chart, 86400000) #파이차트 타이머
-        self.init_timers(self.tree_labels, 10000) # 트리 라벨 타이머
+        # self.init_timers(self.tree_labels, 10000) # 트리 라벨 타이머
         self.home_btn_1.click() # 시작하자마자 홈버튼 클릭해서 흰색 활성화
         # self.scanstart_btn.clicked.connect(self.send_scanControl)
         # self.pollistart_btn.clicked.connect(self.send_polliControl)
@@ -171,7 +171,7 @@ class OrchardGUI(QMainWindow):
         # self.positions = [(0,0),(100, 50), (150, 100), (200, 150), (600,400),(50, 50)]
         # self.position_index = 0
 
-        self.test_moving_btn.clicked.connect(self.change_robot_status)
+        # self.test_moving_btn.clicked.connect(self.change_robot_status)
         self.monibot_status_flag = False
 
         self.update_disease_state()
@@ -777,28 +777,28 @@ class OrchardGUI(QMainWindow):
     # 2d map and robot control page 2
     # -------------------------------------------------------------------------------------------------------------------------------
 
-    def tree_labels(self):
-        # update tree labels
-        self.menu = QMenu(self)
-        self.menu_label = QLabel()
-        self.menu_label.setStyleSheet('padding: 5px; font-size: 14px;')
-        self.menu_label.setWordWrap(True)
-        widget_action = QWidgetAction(self.menu)
-        widget_action.setDefaultWidget(self.menu_label)
-        self.menu.addAction(widget_action)
+    # def tree_labels(self):
+    #     # update tree labels
+    #     self.menu = QMenu(self)
+    #     self.menu_label = QLabel()
+    #     self.menu_label.setStyleSheet('padding: 5px; font-size: 14px;')
+    #     self.menu_label.setWordWrap(True)
+    #     widget_action = QWidgetAction(self.menu)
+    #     widget_action.setDefaultWidget(self.menu_label)
+    #     self.menu.addAction(widget_action)
 
-        labels = [self.tree1_label, self.tree2_label]
-        for label in labels:
-            label.setFont(QFont("NanumSquareRound ExtraBold", 20))
-            if self.percentage >= 75:
-                label.setText(f"{round(self.percentage)}%")
-                label.setStyleSheet("background-color: #8fb84a;")
-            elif self.percentage >= 50:
-                label.setText(f"{round(self.percentage)}%")
-                label.setStyleSheet("background-color: #f8cf3f;")
-            else:
-                label.setText(f"{round(self.percentage)}%")
-                label.setStyleSheet("background-color: #cb4343;")
+    #     labels = [self.tree1_label, self.tree2_label]
+    #     for label in labels:
+    #         label.setFont(QFont("NanumSquareRound ExtraBold", 20))
+    #         if self.percentage >= 75:
+    #             label.setText(f"{round(self.percentage)}%")
+    #             label.setStyleSheet("background-color: #8fb84a;")
+    #         elif self.percentage >= 50:
+    #             label.setText(f"{round(self.percentage)}%")
+    #             label.setStyleSheet("background-color: #f8cf3f;")
+    #         else:
+    #             label.setText(f"{round(self.percentage)}%")
+    #             label.setStyleSheet("background-color: #cb4343;")
         
         # self.init_timers(self.tree_labels, 10000)
 
