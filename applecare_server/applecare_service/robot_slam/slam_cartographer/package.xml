@@ -2,14 +2,24 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>slam_cartographer</name>
-  <version>0.0.0</version>
+  <version>0.0.3</version>
   <description>SLAM package for Cartographer using ROS 2</description>
   <maintainer email="0907smko@gmail.com">ksm</maintainer>
-  <license>Apache 2.0</license>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <!-- Dependencies -->
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>cartographer_ros</depend>
+
+    <!-- For Python executables -->
+  <exec_depend>python3</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-scipy</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
