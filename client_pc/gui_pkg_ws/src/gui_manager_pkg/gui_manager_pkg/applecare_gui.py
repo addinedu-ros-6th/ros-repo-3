@@ -163,7 +163,8 @@ class OrchardGUI(QMainWindow):
 
         self.task_upload_btn.clicked.connect(self.upload_task)
 
-        self.amcl_node.pose_updated.connect(self.update_amcl)
+        self.amcl_node.pose_updated.connect(lambda pose, flag: self.update_amcl(pose, flag))
+        self.amcl_node.monibot_pose_updated.connect(lambda pose, flag: self.update_amcl(pose, flag))
 
         self.cctv_btn.clicked.connect(self.see_cctv)
 
@@ -270,13 +271,16 @@ class OrchardGUI(QMainWindow):
     def change_robot_status(self,moni1_status,polli1_status):
         if moni1_status == 1:
             self.monibot_test_icon.setEnabled(False)
+            self.home_monibot_state_label.setText("waiting")
         else:
             self.monibot_test_icon.setEnabled(True)
+            self.home_monibot_state_label.setText("active")
         if polli1_status == 1:
             self.pollibot_test_icon.setEnabled(False)
+            self.home_pollibot_state_label.setText("waiting")
         else:
             self.pollibot_test_icon.setEnabled(True)
-
+            self.home_pollibot_state_label.setText("active")
         
         
         # print("status flag =", self.monibot_status_flag)
@@ -344,9 +348,10 @@ class OrchardGUI(QMainWindow):
                                         hour=hour, minute=minute) # task_type 0: scan, 1: pollinate
         
         
-    def update_amcl(self,pose):
+    def update_amcl(self,pose,flag):
         # amcl= self.amcl_node.get_pose()
         print("update_amcl!!!")
+        # monibot_pose = self.amcl_node.get_pose2()
         # if amcl is not None:
         #     x= int(amcl.pose.pose.position.x)
         #     y= int(amcl.pose.pose.position.y)
@@ -359,10 +364,17 @@ class OrchardGUI(QMainWindow):
         #     self.test_map_label.setPixmap(self.map_pixmap)
         # print(self.amcl_node.pose.pose.position.x)
         print(pose.pose.pose.position.x,pose.pose.pose.position.y)
-        self.move_button((int(pose.pose.pose.position.x*-124)+460,int(pose.pose.pose.position.y*-200)+500)) # 파라미터 수정 필요
+        x = pose.pose.pose.position.x
+        y = pose.pose.pose.position.y
+        if flag == "polli":
+            self.move_button((int(x*(-152.135)-y*1.769+489.378),int(5.937*x-216.985*y+410.652)),"polli") # 파라미터 수정 필요
+            # self.move_button((520,620),"polli")
+        else:
+            self.move_button((int(pose.pose.pose.position.x*-5.06 + 394.48),int(pose.pose.pose.position.y*-5.07 -0.4)),"moni") # 파라미터 수정 필요
+        # self.move_button(int(monibot_pose.pose.pose.position.x*-124)+460,int(monibot_pose.pose.pose.position.y*-200)+500)
         # self.testingbutton = QPushButton("Click Me", self)
         # self.test_moving_btn.move(100,150)
-    def move_button(self,position):
+    def move_button(self,position,flag):
         label_geometry = self.map_background.geometry()
         label_x, label_y = label_geometry.x(), label_geometry.y()
         dx, dy = position 
@@ -374,7 +386,10 @@ class OrchardGUI(QMainWindow):
         # new_position = self.positions[self.position_index]
         print(new_position)
         # self.test_moving_btn.move(*new_position)
-        self.monibot_test_icon.move(*new_position)
+        if flag == "polli":
+            self.monibot_test_icon.move(*new_position)
+        else:
+            self.pollibot_test_icon.move(*new_position)
         # 다음 위치로 인덱스 업데이트
         # self.position_index = (self.position_index + 1) % len(self.positions)
 
@@ -860,7 +875,7 @@ class OrchardGUI(QMainWindow):
                         AND robot_id IS NOT NULL
                     )
 
-                    -- Step 2: 해당 task_id와 target_type_id = 6인 TaskEvent 레코드 찾기
+                    -- Step 2: 해당 task_id와 target_type_id = 3인 TaskEvent 레코드 찾기
                     SELECT distinct
 
                         CASE 
@@ -880,7 +895,7 @@ class OrchardGUI(QMainWindow):
                         END AS zone
                     FROM TaskEvent AS te
                     JOIN filtered_tasks AS ft ON ft.task_id = te.task_id
-                    WHERE te.target_type_id = 6
+                    WHERE te.target_type_id = 3
                     AND (
                         (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20) OR
                         (te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20) OR
@@ -939,7 +954,7 @@ class OrchardGUI(QMainWindow):
                         AND robot_id IS NOT NULL
                     )
 
-                    -- Step 2: 해당 task_id와 target_type_id = 6인 TaskEvent 레코드 찾기
+                    -- Step 2: 해당 task_id와 target_type_id = 3인 TaskEvent 레코드 찾기
                     SELECT distinct
 
                         CASE 
@@ -959,7 +974,7 @@ class OrchardGUI(QMainWindow):
                         END AS zone
                     FROM TaskEvent AS te
                     JOIN filtered_tasks AS ft ON ft.task_id = te.task_id
-                    WHERE te.target_type_id = 6
+                    WHERE te.target_type_id = 3
                     AND (
                         (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20) OR
                         (te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20) OR

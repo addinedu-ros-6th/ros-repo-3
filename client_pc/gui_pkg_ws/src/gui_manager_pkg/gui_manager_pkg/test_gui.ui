@@ -782,7 +782,7 @@ border-bottom-right-radius:20px;</string>
               <set>Qt::AlignCenter</set>
              </property>
             </widget>
-            <widget class="QLabel" name="home_monibot_state_label_2">
+            <widget class="QLabel" name="home_pollibot_state_label">
              <property name="geometry">
               <rect>
                <x>20</x>
@@ -1298,8 +1298,8 @@ background-color: rgba(191, 64, 64, 0);</string>
           <widget class="QPushButton" name="tree2_icon">
            <property name="geometry">
             <rect>
-             <x>450</x>
-             <y>120</y>
+             <x>440</x>
+             <y>130</y>
              <width>91</width>
              <height>91</height>
             </rect>
@@ -1325,8 +1325,8 @@ background-color: rgba(191, 64, 64, 0);</string>
           <widget class="QPushButton" name="tree1_icon">
            <property name="geometry">
             <rect>
-             <x>210</x>
-             <y>120</y>
+             <x>220</x>
+             <y>130</y>
              <width>71</width>
              <height>91</height>
             </rect>
@@ -1389,8 +1389,8 @@ background-color: rgba(191, 64, 64, 0);</string>
           <widget class="QPushButton" name="pollibot_test_icon">
            <property name="geometry">
             <rect>
-             <x>630</x>
-             <y>510</y>
+             <x>610</x>
+             <y>500</y>
              <width>71</width>
              <height>51</height>
             </rect>
@@ -1456,8 +1456,8 @@ background-color: rgba(191, 64, 64, 0);</string>
           <widget class="QPushButton" name="tree2_icon_2">
            <property name="geometry">
             <rect>
-             <x>510</x>
-             <y>120</y>
+             <x>490</x>
+             <y>130</y>
              <width>91</width>
              <height>91</height>
             </rect>
@@ -1484,7 +1484,7 @@ background-color: rgba(191, 64, 64, 0);</string>
            <property name="geometry">
             <rect>
              <x>270</x>
-             <y>120</y>
+             <y>130</y>
              <width>71</width>
              <height>91</height>
             </rect>
@@ -1611,33 +1611,6 @@ background-color: rgba(191, 64, 64, 0);</string>
             </layout>
            </widget>
           </widget>
-          <widget class="QPushButton" name="tree1_icon_5">
-           <property name="geometry">
-            <rect>
-             <x>620</x>
-             <y>280</y>
-             <width>71</width>
-             <height>91</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-background-color: rgba(191, 64, 64, 0);</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="resources_test.qrc">
-             <normaloff>:/test_sources/disease1.png</normaloff>:/test_sources/disease1.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>60</width>
-             <height>60</height>
-            </size>
-           </property>
-          </widget>
           <zorder>map_background</zorder>
           <zorder>splitter</zorder>
           <zorder>tree2_icon</zorder>
@@ -1646,7 +1619,6 @@ background-color: rgba(191, 64, 64, 0);</string>
           <zorder>tree2_icon_2</zorder>
           <zorder>tree1_icon_4</zorder>
           <zorder>task_upload_btn</zorder>
-          <zorder>tree1_icon_5</zorder>
           <zorder>pollibot_test_icon</zorder>
           <zorder>monibot_test_icon</zorder>
          </widget>

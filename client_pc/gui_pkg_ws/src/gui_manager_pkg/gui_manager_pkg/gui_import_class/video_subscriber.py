@@ -92,9 +92,9 @@ class ImageSubscriber(Node):
     def listener_callback4(self, msg):
         # Convert ROS Image message to OpenCV image
         #self.current_frame4 = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
-
-	image_array = np.frombuffer(msg.data, np.uint8)
+        image_array = np.frombuffer(msg.data, np.uint8)
         self.current_frame4 = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+    
     def get_frame1(self):
         return self.current_frame1
     def get_frame2(self):
@@ -107,25 +107,30 @@ class ImageSubscriber(Node):
 from PyQt5.QtCore import QObject, pyqtSignal
 from geometry_msgs.msg import PoseWithCovarianceStamped
 class amclSubscriber(Node,QObject):
-    pose_updated = pyqtSignal(object)
+    pose_updated = pyqtSignal(object,str)
+    monibot_pose_updated =pyqtSignal(object,str)
     def __init__(self):
         # super().__init__('amcl_subscriber')
         Node.__init__(self,'amcl_subscriber')
         QObject.__init__(self)
-        self.subscription = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose',self.listener_callback,10)
-        self.subscription
+        self.pollibot_pose_subscription = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose',self.listener_callback,10)
+        self.monibot_pose_subscription = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose',self.listener_callback2,10)
         self.pose=None
-        
+    def listener_callback2(self,msg):
+        self.pose2 = msg
+        self.monibot_pose_updated.emit(self.pose2,"moni")
     def listener_callback(self,msg):
         self.pose = msg
         print("$$$$$$")
         print(self.pose)
         print("$$$$$")
-        self.pose_updated.emit(self.pose)  # 시그널 발생
+        self.pose_updated.emit(self.pose,"polli")  # 시그널 발생
         # print(self.pose.pose.pose.position.x)
     
     def get_pose(self):
         return self.pose
+    def get_pose2(self):
+        return self.pose2
     
 if __name__ == "__main__":
     rclpy.init()
