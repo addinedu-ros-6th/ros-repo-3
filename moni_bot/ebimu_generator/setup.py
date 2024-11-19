@@ -22,10 +22,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-       		"intel_pub = arm_sensor_calibration.intel_pub:main",
-		    "intel_sub = arm_sensor_calibration.intel_sub:main",
-		    "raw_imu_pub = arm_sensor_calibration.raw_imu_pub:main",
-            "madgwick_imu_pub = arm_sensor_calibration.madgwick_imu_pub:main",
+       		 "raw_imu_pub = ebimu_generator.raw_imu_pub:main",
+       		 "madgwick_imu_pub = ebimu_generator.madgwick_imu_pub:main",
+       		 "ebimu_pub = ebimu_generator.ebimu_pub:main"
 
 	 ],
     },
