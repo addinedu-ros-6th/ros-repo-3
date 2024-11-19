@@ -7,6 +7,8 @@ from std_msgs.msg import Int32
 
 from gui_manager_msgs.srv import DBCommand
 from gui_manager_msgs.msg import TaskRequest
+from gui_manager_msgs.msg import AreaDone
+from gui_manager_msgs.msg import TaskEvent
 # from task_topic_subscriber_class import TaskTopicSubscriber
 from datetime import datetime
 import ast
@@ -17,9 +19,11 @@ class TaskManager(Node):
     def __init__(self):
         super().__init__('task_manager_node')
         self.task_subscriber = self.create_subscription(TaskRequest,'gui/task_topic',self.task_topic_callback,10)
+        self.event_subscriber = self.create_subscription(TaskEvent,'task_event',self.taskevent_callback,10)
+        self.area_done_subscriber = self.create_subscription(AreaDone,'task_done',self.area_done_callback,10)
         self.task_publisher_to_monibot1 = self.create_publisher(Int32,'monibot/task',10)
         # self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'pollibot/task',10)
-        self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'zone_selection',10)
+        self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'pollibot/zone_selection',10)
         self.task_msg_data = None
 
         self.dbmanager_client = self.create_client(DBCommand,'/DB_server')
@@ -27,9 +31,10 @@ class TaskManager(Node):
             self.get_logger().info('Service not available, waiting again...')
         self.DBrequest = DBCommand.Request()
         # self.get_scheduled_task()
-        self.timer2 = self.create_timer(10, self.get_scheduled_task)
-        self.timer = self.create_timer(30.0, self.check_scheduled_time)
+        self.timer2 = self.create_timer(20, self.get_scheduled_task)
+        self.timer = self.create_timer(5.0, self.check_scheduled_time)
         # self.check_scheduled_time()
+
     def get_scheduled_task(self):
         print("$$%$%$%$")
         query = """ select 
@@ -65,6 +70,7 @@ class TaskManager(Node):
         # [2, 1, 2, 1, '2099-11-09 10:00:00']]
         # self.check_scheduled_time()
     def check_scheduled_time(self):
+        print("checking time....")
         # 현재 시간 읽기
         current_time = datetime.now()
         # formatted_time = '2099-11-19 10:00:00'
@@ -379,10 +385,131 @@ class TaskManager(Node):
         if cc == 1:
             self.future_insert = self.dbmanager_client.call_async(self.DBrequest)
             self.future_insert.add_done_callback(self.insert_response_callback)
+    
+    def taskevent_callback(self,msg):
+        # <아직 테스트 안함, 메세지 타입도 맞춰야됨, 누가 어느 정보를 보낼지도 정해야됨> (11.15)
+        print(msg)
+        self.taskevent_msg = msg
+        #msg robot_id, robot_x, robot_y, event_time, target_x,target_y, target
+                     # (   pose    )                    (ai)            name or id
+        robot_id, robot_x,robot_y, event_time, target_x,target_y, target_id = msg.robot_id, msg.robot_x,msg.robot_y, msg.event_time, msg.target_x,msg.target_y, msg.target_type_id
+        print("robot_id = ", robot_id)
+        query = f""" select task_id from Task where robot_id = {robot_id};
+                    """
+        print("query = ", query)
+        request = DBCommand.Request()
+        request.cc = 0
+        request.query = query
+        future =self.dbmanager_client.call_async(request)
+        future.add_done_callback(self.insert_taskevent)
+    def insert_taskevent(self,future):
+        try:
+            response = future.result()
+            print(3)
+            print(response)
+            result_list = response.result_list
+            task_id = result_list[0]
+            print(4)
+            data_list = []
+            print(data_list)
+            robot_id, robot_x,robot_y, event_time, target_x,target_y, target_id = self.taskevent_msg.robot_id, self.taskevent_msg.robot_x,self.taskevent_msg.robot_y, self.taskevent_msg.event_time, self.taskevent_msg.target_x,self.taskevent_msg.target_y, self.taskevent_msg.target_type_id
+            event_time = str(event_time)
+            # robot_id, robot_x,robot_y, event_time, target_x,target_y, target_id = data_list[0],data_list[1],data_list[2],data_list[3],data_list[4],data_list[5],data_list[6]
+            # print("event_time = ", event_time, type(event_time))
+            # for item in [robot_id, robot_x,robot_y, event_time, target_x,target_y, target_id]:
+            #     print(type(item))
+            #     if type(item) == str():
+            #         item = re.sub(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})', r"'\1'", item)
+            #     print(item)
+            #     parsed_item = ast.literal_eval(item)
+            #     print(8888)
+            #     if isinstance(parsed_item, int):
+            #         # 정수일 경우 리스트로 감싸서 추가
+            #         data_list.append([parsed_item])
+            #     else:
+            #         # 이미 튜플인 경우 그대로 리스트로 변환
+            #         data_list.append(list(parsed_item))
+                
+            # print(data_list)
+            row_id,_area_detail=self.find_area(robot_x,robot_y)
+            print(5)
+            robot_id = int(robot_id)
+            print(6)
+            print(event_time)
+            event_time = event_time.strip('()')
+            event_time = datetime.strptime(event_time, "%Y%m%d %H:%M:%S")
+            print(7)
+            print(task_id, event_time) ###### 확인해
+            query = f""" insert into TaskEvent (task_id, row_id, event_datetime, robot_x,robot_y,target_x,target_y,target_type_id)
+                        values ({task_id}, {row_id}, '{event_time}', {robot_x},{robot_y},{target_x},{target_y}, {target_id})
+                        """        
+            
+            request = DBCommand.Request()
+            request.cc = 1
+            request.query = query
+            future = self.dbmanager_client.call_async(request)
+            print(6)
+            
+        except Exception as e:
+            print(f"Response call failed: {e}")
 
+    def find_area(self,robot_x,robot_y):
+        if robot_x >= 0 and robot_x < 10 and robot_y >= 0 and robot_y < 20:
+            row_id = 1
+            area_detail='A4'
+        elif robot_x >= 10 and robot_x < 20 and robot_y >= 0 and robot_y < 20 :
+            row_id = 1
+            area_detail='A5'
+        elif robot_x >= 20 and robot_x <= 30 and robot_y >= 0 and robot_y < 20 :
+            row_id = 1
+            area_detail= 'A6'
+        elif robot_x >= 20 and robot_x <= 30 and robot_y >= 20 and robot_y <= 40 :
+            row_id = 1
+            area_detail= 'A1'
+        elif robot_x >= 10 and robot_x <= 20 and robot_y >= 20 and robot_y <= 40 :
+            row_id = 1
+            area_detail= 'A2'
+        elif robot_x >= 0 and robot_x < 10 and robot_y >= 20 and robot_y <= 40 :
+            row_id = 1
+            area_detail= 'A3'
+    
+        elif robot_x > 30 and robot_x <= 40 and robot_y >= 0 and robot_y <= 20 :
+            row_id = 2
+            area_detail= 'B4'
+        elif robot_x > 40 and robot_x <= 50 and robot_y >= 0 and robot_y <= 20 :
+            row_id = 2
+            area_detail= 'B5'
+        elif robot_x > 50 and robot_x <= 60 and robot_y >= 0 and robot_y <= 20 :
+            row_id = 2
+            area_detail= 'B6'
+        elif robot_x > 50 and robot_x <= 60 and robot_y > 20 and robot_y <= 40 :
+            row_id = 2
+            area_detail= 'B1'
+        elif robot_x > 40 and robot_x <= 50 and robot_y > 20 and robot_y <= 40 :
+            row_id = 2
+            area_detail= 'B2'
+        elif robot_x > 30 and robot_x <= 40 and robot_y > 20 and robot_y <= 40 :
+            row_id = 2
+            area_detail= 'B3'
+        
+        return row_id, area_detail
 
-
-
+    def area_done_callback(self, msg):
+        robot_id = msg.robot_id
+        row_id = msg.row_id
+        row_task_done = msg.row_task_done
+        query = f""" UPDATE TaskRow
+                    SET task_result = {row_task_done}
+                    WHERE row_id = {row_id} and task_id IN (
+                        SELECT task_id
+                        FROM Task
+                        WHERE robot_id = {robot_id} 
+                    );
+                    """
+        request = DBCommand.Request()
+        request.cc = 1
+        request.query = query
+        self.dbmanager_client.call_async(request)
 def main():
     rclpy.init()
     

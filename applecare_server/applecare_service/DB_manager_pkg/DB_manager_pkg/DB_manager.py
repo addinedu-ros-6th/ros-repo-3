@@ -15,23 +15,23 @@ class DB_manager_server(Node):
         # login to applecare DB
         self.connect_to_database()
     
-        self.test_flag = True
-        self.test_timer = self.create_timer(5,self.change_robot_status_test)
+    #     self.test_flag = True
+    #     self.test_timer = self.create_timer(5,self.change_robot_status_test)
 
-    def change_robot_status_test(self):
-        if self.test_flag==True:
-            query="update Task set robot_id = null where task_id =36;"
-        else:
-            query="update Task set robot_id = 1 where task_id =36;"
-        self.cursor.execute(query)
-        self.connection.commit()
-        self.test_flag = not self.test_flag
+    # def change_robot_status_test(self):
+    #     if self.test_flag==True:
+    #         query="update Task set robot_id = null where task_id =36;"
+    #     else:
+    #         query="update Task set robot_id = 1 where task_id =36;"
+    #     self.cursor.execute(query)
+    #     self.connection.commit()
+    #     self.test_flag = not self.test_flag
 
 
-        self.cursor.execute("select robot_id from Task where task_id = 36;")
-        db_result = self.cursor.fetchall()
-        print(db_result)
-        print("--------------------------")
+    #     self.cursor.execute("select robot_id from Task where task_id = 36;")
+    #     db_result = self.cursor.fetchall()
+    #     print(db_result)
+    #     print("--------------------------")
     # DB login function
     def connect_to_database(self):
         if not self.connection_to_database:
@@ -114,6 +114,7 @@ class DB_manager_server(Node):
 
     def insert_to_db(self,query):
         print("insert to db")
+        print(query)
         self.cursor.execute(query)
         self.connection.commit()
         return None

@@ -19,6 +19,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/RequestTopic.msg"
   "msg/ReturnTopic.msg"
   "msg/TaskRequest.msg"
+  "msg/TaskEvent.msg"
+  "msg/AreaDone.msg"
 )
 
 if(BUILD_TESTING)
