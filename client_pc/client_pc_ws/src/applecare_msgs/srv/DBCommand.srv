@@ -1,5 +1,0 @@
-int32 cc
-string command
----
-bool success
-string message
