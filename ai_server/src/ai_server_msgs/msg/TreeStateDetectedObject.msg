@@ -1,0 +1,2 @@
+bool spot_detect
+bool wilting_detect
