@@ -453,45 +453,104 @@ class TaskManager(Node):
         except Exception as e:
             print(f"Response call failed: {e}")
 
-    def find_area(self,robot_x,robot_y):
-        if robot_x >= 0 and robot_x < 10 and robot_y >= 0 and robot_y < 20:
-            row_id = 1
-            area_detail='A4'
-        elif robot_x >= 10 and robot_x < 20 and robot_y >= 0 and robot_y < 20 :
-            row_id = 1
-            area_detail='A5'
-        elif robot_x >= 20 and robot_x <= 30 and robot_y >= 0 and robot_y < 20 :
-            row_id = 1
-            area_detail= 'A6'
-        elif robot_x >= 20 and robot_x <= 30 and robot_y >= 20 and robot_y <= 40 :
-            row_id = 1
-            area_detail= 'A1'
-        elif robot_x >= 10 and robot_x <= 20 and robot_y >= 20 and robot_y <= 40 :
-            row_id = 1
-            area_detail= 'A2'
-        elif robot_x >= 0 and robot_x < 10 and robot_y >= 20 and robot_y <= 40 :
-            row_id = 1
-            area_detail= 'A3'
+    # def find_area(self,robot_x,robot_y):
+    #     if robot_x >= 0 and robot_x < 10 and robot_y >= 0 and robot_y < 20:
+    #         row_id = 1
+    #         area_detail='A4'
+    #     elif robot_x >= 10 and robot_x < 20 and robot_y >= 0 and robot_y < 20 :
+    #         row_id = 1
+    #         area_detail='A5'
+    #     elif robot_x >= 20 and robot_x <= 30 and robot_y >= 0 and robot_y < 20 :
+    #         row_id = 1
+    #         area_detail= 'A6'
+    #     elif robot_x >= 20 and robot_x <= 30 and robot_y >= 20 and robot_y <= 40 :
+    #         row_id = 1
+    #         area_detail= 'A1'
+    #     elif robot_x >= 10 and robot_x <= 20 and robot_y >= 20 and robot_y <= 40 :
+    #         row_id = 1
+    #         area_detail= 'A2'
+    #     elif robot_x >= 0 and robot_x < 10 and robot_y >= 20 and robot_y <= 40 :
+    #         row_id = 1
+    #         area_detail= 'A3'
     
-        elif robot_x > 30 and robot_x <= 40 and robot_y >= 0 and robot_y <= 20 :
-            row_id = 2
-            area_detail= 'B4'
-        elif robot_x > 40 and robot_x <= 50 and robot_y >= 0 and robot_y <= 20 :
-            row_id = 2
-            area_detail= 'B5'
-        elif robot_x > 50 and robot_x <= 60 and robot_y >= 0 and robot_y <= 20 :
-            row_id = 2
-            area_detail= 'B6'
-        elif robot_x > 50 and robot_x <= 60 and robot_y > 20 and robot_y <= 40 :
-            row_id = 2
-            area_detail= 'B1'
-        elif robot_x > 40 and robot_x <= 50 and robot_y > 20 and robot_y <= 40 :
-            row_id = 2
-            area_detail= 'B2'
-        elif robot_x > 30 and robot_x <= 40 and robot_y > 20 and robot_y <= 40 :
-            row_id = 2
-            area_detail= 'B3'
+    #     elif robot_x > 30 and robot_x <= 40 and robot_y >= 0 and robot_y <= 20 :
+    #         row_id = 2
+    #         area_detail= 'B4'
+    #     elif robot_x > 40 and robot_x <= 50 and robot_y >= 0 and robot_y <= 20 :
+    #         row_id = 2
+    #         area_detail= 'B5'
+    #     elif robot_x > 50 and robot_x <= 60 and robot_y >= 0 and robot_y <= 20 :
+    #         row_id = 2
+    #         area_detail= 'B6'
+    #     elif robot_x > 50 and robot_x <= 60 and robot_y > 20 and robot_y <= 40 :
+    #         row_id = 2
+    #         area_detail= 'B1'
+    #     elif robot_x > 40 and robot_x <= 50 and robot_y > 20 and robot_y <= 40 :
+    #         row_id = 2
+    #         area_detail= 'B2'
+    #     elif robot_x > 30 and robot_x <= 40 and robot_y > 20 and robot_y <= 40 :
+    #         row_id = 2
+    #         area_detail= 'B3'
         
+    #     return row_id, area_detail
+    def find_area(self, robot_x, robot_y):
+    # Row A 영역
+        if 1.3 < robot_x <= 1.676 and 0.525 < robot_y <= 0.825:
+            row_id = 1
+            area_detail = 'A1'
+        elif 1.3 < robot_x <= 1.676 and 0.825 < robot_y <= 1.175:
+            row_id = 1
+            area_detail = 'A2'
+        elif 1.676 < robot_x <= 1.926 and 1.175 < robot_y <= 1.475:
+            row_id = 1
+            area_detail = 'A3'
+        elif 1.926 < robot_x <= 2.151 and 1.175 < robot_y <= 1.475:
+            row_id = 1
+            area_detail = 'A4'
+        elif 2.151 < robot_x <= 2.451 and 0.825 < robot_y <= 1.175:
+            row_id = 1
+            area_detail = 'A5'
+        elif 2.151 < robot_x <= 2.451 and 0.525 < robot_y <= 0.825:
+            row_id = 1
+            area_detail = 'A6'
+        elif 1.926 < robot_x <= 2.151 and 0.35 < robot_y <= 0.525:
+            row_id = 1
+            area_detail = 'A7'
+        elif 1.676 < robot_x <= 1.926 and 0.35 < robot_y <= 0.525:
+            row_id = 1
+            area_detail = 'A8'
+        
+        # Row B 영역
+        elif 1.401 < robot_x <= 1.701 and -0.475 < robot_y <= -0.175:
+            row_id = 2
+            area_detail = 'B1'
+        elif 1.401 < robot_x <= 1.701 and -0.175 < robot_y <= 0.15:
+            row_id = 2
+            area_detail = 'B2'
+        elif 1.701 < robot_x <= 1.926 and 0.15 < robot_y <= 0.35:
+            row_id = 2
+            area_detail = 'B3'
+        elif 1.926 < robot_x <= 2.151 and 0.15 < robot_y <= 0.35:
+            row_id = 2
+            area_detail = 'B4'
+        elif 2.151 < robot_x <= 2.451 and -0.175 < robot_y <= 0.15:
+            row_id = 2
+            area_detail = 'B5'
+        elif 2.151 < robot_x <= 2.451 and -0.475 < robot_y <= -0.175:
+            row_id = 2
+            area_detail = 'B6'
+        elif 1.926 < robot_x <= 2.151 and -0.775 < robot_y <= -0.475:
+            row_id = 2
+            area_detail = 'B7'
+        elif 1.701 < robot_x <= 1.926 and -0.775 < robot_y <= -0.475:
+            row_id = 2
+            area_detail = 'B8'
+        
+        else:
+            # 좌표가 어떤 영역에도 포함되지 않는 경우
+            row_id = None
+            area_detail = 'Unknown'
+
         return row_id, area_detail
 
     def area_done_callback(self, msg):

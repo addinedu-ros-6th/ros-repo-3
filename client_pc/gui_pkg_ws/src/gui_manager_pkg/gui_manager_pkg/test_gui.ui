@@ -507,7 +507,7 @@ QPushButton:checked{
 background-color: rgb(201, 195, 191);</string>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="mainboard_page">
           <widget class="QGroupBox" name="weather_groupbox">
@@ -840,9 +840,9 @@ border-bottom-right-radius:20px;</string>
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>50</y>
+              <y>0</y>
               <width>371</width>
-              <height>211</height>
+              <height>261</height>
              </rect>
             </property>
             <property name="styleSheet">

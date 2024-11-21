@@ -1,3 +1,4 @@
+# check the query s that setted correct for real data and dummy data
 from gui_manager_pkg.cctv_viewer import CctvViewer
 import os
 import sys
@@ -102,8 +103,10 @@ class OrchardGUI(QMainWindow):
         self.tree1_icon.installEventFilter(self)
         self.tree2_icon.installEventFilter(self)
 
-        self.pollination_rate()  # Call the method to update the UI
-        self.scan_rate()
+        # self.pollination_rate()  # Call the method to update the UI
+        # self.scan_rate()
+        self.init_timers(self.scan_rate,1000)
+        self.init_timers(self.pollination_rate,1000)
         
         # -------------------------------------------------------------------------
         # statistics and analytics page 3
@@ -197,6 +200,7 @@ class OrchardGUI(QMainWindow):
         row_id = f"and row_id = {area} "
         target_id = f"and target_type_name = '{search_item}' "
         print(area,start_time,end_time,search_item)
+        # test_query for dummy data
         query = f""" select case when row_id = 1 then 'A' else 'B' end as '구역', event_datetime as '날짜', 
                         CASE 
                             WHEN robot_x >= 0 AND robot_x < 10 AND robot_y >= 0 AND robot_y < 20 THEN 'A4'
@@ -218,6 +222,42 @@ class OrchardGUI(QMainWindow):
                         left join Target_type on Target_type.target_type_id = TaskEvent.target_type_id
                         where event_datetime between {start_time} and {end_time}
                     """
+        # real query 
+        # query = """SELECT 
+        #                 CASE 
+        #                     WHEN row_id = 1 THEN 'A' 
+        #                     ELSE 'B' 
+        #                 END AS '구역', 
+                        
+        #                 event_datetime AS '날짜',
+                        
+        #                 CASE 
+        #                     WHEN robot_x >= 1.3 AND robot_x < 1.676 AND robot_y >= 0.525 AND robot_y < 0.825 THEN 'A1'
+        #                     WHEN robot_x >= 1.3 AND robot_x < 1.676 AND robot_y >= 0.825 AND robot_y < 1.175 THEN 'A2'
+        #                     WHEN robot_x >= 1.676 AND robot_x < 1.926 AND robot_y >= 1.175 AND robot_y < 1.475 THEN 'A3'
+        #                     WHEN robot_x >= 1.926 AND robot_x < 2.151 AND robot_y >= 1.175 AND robot_y < 1.475 THEN 'A4'
+        #                     WHEN robot_x >= 2.151 AND robot_x < 2.451 AND robot_y >= 0.825 AND robot_y < 1.175 THEN 'A5'
+        #                     WHEN robot_x >= 2.151 AND robot_x < 2.451 AND robot_y >= 0.525 AND robot_y < 0.825 THEN 'A6'
+        #                     WHEN robot_x >= 1.926 AND robot_x < 2.151 AND robot_y >= 0.35 AND robot_y < 0.525 THEN 'A7'
+        #                     WHEN robot_x >= 1.676 AND robot_x < 1.926 AND robot_y >= 0.35 AND robot_y < 0.525 THEN 'A8'
+
+        #                     WHEN robot_x >= 1.401 AND robot_x < 1.701 AND robot_y >= -0.475 AND robot_y < -0.175 THEN 'B1'
+        #                     WHEN robot_x >= 1.401 AND robot_x < 1.701 AND robot_y >= -0.175 AND robot_y < 0.15 THEN 'B2'
+        #                     WHEN robot_x >= 1.701 AND robot_x < 1.926 AND robot_y >= 0.15 AND robot_y < 0.35 THEN 'B3'
+        #                     WHEN robot_x >= 1.926 AND robot_x < 2.151 AND robot_y >= 0.15 AND robot_y < 0.35 THEN 'B4'
+        #                     WHEN robot_x >= 2.151 AND robot_x < 2.451 AND robot_y >= -0.175 AND robot_y < 0.15 THEN 'B5'
+        #                     WHEN robot_x >= 2.151 AND robot_x < 2.451 AND robot_y >= -0.475 AND robot_y < -0.175 THEN 'B6'
+        #                     WHEN robot_x >= 1.926 AND robot_x < 2.151 AND robot_y >= -0.775 AND robot_y < -0.475 THEN 'B7'
+        #                     WHEN robot_x >= 1.701 AND robot_x < 1.926 AND robot_y >= -0.775 AND robot_y < -0.475 THEN 'B8'
+
+        #                     ELSE 'Unknown'  -- 범위에 맞지 않는 경우를 대비한 기본값
+        #                 END AS zone,
+
+        #                 target_type_name 
+
+        #             FROM TaskEvent 
+        #             LEFT JOIN Target_type ON Target_type.target_type_id = TaskEvent.target_type_id
+        #             WHERE event_datetime BETWEEN {start_time} AND {end_time};"""
         if area != 'All':
             query = query + row_id
         if search_item != 'All':
@@ -269,6 +309,7 @@ class OrchardGUI(QMainWindow):
         self.change_robot_status(moni1_status,polli1_status)
 
     def change_robot_status(self,moni1_status,polli1_status):
+        print(moni1_status,polli1_status)
         if moni1_status == 1:
             self.monibot_test_icon.setEnabled(False)
             self.home_monibot_state_label.setText("waiting")
@@ -369,8 +410,12 @@ class OrchardGUI(QMainWindow):
         if flag == "polli":
             self.move_button((int(x*(-152.135)-y*1.769+489.378),int(5.937*x-216.985*y+410.652)),"polli") # 파라미터 수정 필요
             # self.move_button((520,620),"polli")
-        else:
-            self.move_button((int(pose.pose.pose.position.x*-5.06 + 394.48),int(pose.pose.pose.position.y*-5.07 -0.4)),"moni") # 파라미터 수정 필요
+
+
+        # else:
+        #     self.move_button((int(pose.pose.pose.position.x*-5.06 + 394.48),int(pose.pose.pose.position.y*-5.07 -0.4)),"moni") # 파라미터 수정 필요
+        
+        
         # self.move_button(int(monibot_pose.pose.pose.position.x*-124)+460,int(monibot_pose.pose.pose.position.y*-200)+500)
         # self.testingbutton = QPushButton("Click Me", self)
         # self.test_moving_btn.move(100,150)
@@ -623,8 +668,8 @@ class OrchardGUI(QMainWindow):
             # ("달성", disease1_percent, "#544b40", "#746858"),
             # ("미달성", disease2_percent, "#6e6053", "#6a5030"),
             # ("예외", fine_percent, "#766c5f", "#9c8e7c"),
-            ("마름병", disease1_percent, "#544b40", "#746858"),
-            ("점박이병", disease2_percent, "#6e6053", "#6a5030"),
+            ("마름병", disease1_percent, "#6e6053", "#6a5030"),
+            ("점박이", disease2_percent, "#6e6053", "#6a5030"),
             ("정상", fine_percent, "#766c5f", "#9c8e7c"),
         ] # need to get from DATABASE
 
@@ -655,6 +700,7 @@ class OrchardGUI(QMainWindow):
                 slice_.setExplodeDistanceFactor(0.25)
                 slice_.setLabelVisible(True)
 
+
         chart.addSeries(outer_series)
 
         for slice_ in outer_series.slices():
@@ -662,13 +708,14 @@ class OrchardGUI(QMainWindow):
             # label = f"<p font='NanumSquareRound ExtraBold' align='left' style='color:{color}'>{slice_.label()}<br>{round(slice_.percentage() * 100)}%</p>"
             label = f"<p style='font-family:NanumSquareRound ExtraBold; font-size:8pt; color:{color};'>{slice_.label()}<br>{round(slice_.percentage() * 100)}%</p>"
             slice_.setLabelPosition(QPieSlice.LabelOutside)
+            slice_.setLabelArmLengthFactor(0.05)
             slice_.setLabel(label)
 
         chart_view = QChartView(chart)
         chart_view.setRenderHint(QPainter.Antialiasing)
         chart_view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
-        chart_view.setMinimumSize(280, 200)  # Set a bigger minimum size for the chart
+        chart_view.setMinimumSize(250, 290)  # Set a bigger minimum size for the chart
 
         layout = QVBoxLayout()
         layout.addItem(QSpacerItem(0, 0))  # Add a vertical spacer (40px) above the chart
@@ -867,7 +914,51 @@ class OrchardGUI(QMainWindow):
         # self.pollination += 5  # Update this as needed
         A_area_num = 8
         B_area_num = 8
-        query = """ -- Step 1: task_type = 1 AND robot_id IS NOT NULL인 task_id 찾기
+        # query = """ -- Step 1: task_type = 1 AND robot_id IS NOT NULL인 task_id 찾기
+        #             WITH filtered_tasks AS (
+        #                 SELECT task_id
+        #                 FROM Task
+        #                 WHERE task_type = 1
+        #                 AND robot_id IS NOT NULL
+        #             )
+
+        #             -- Step 2: 해당 task_id와 target_type_id = 3인 TaskEvent 레코드 찾기
+        #             SELECT distinct
+
+        #                 CASE 
+        #                     WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A4'
+        #                     WHEN te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A5'
+        #                     WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A6'
+        #                     WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A1'
+        #                     WHEN te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A2'
+        #                     WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A3'
+
+        #                     WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B4'
+        #                     WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B5'
+        #                     WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B6'
+        #                     WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B1'
+        #                     WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B2'
+        #                     WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B3'
+        #                 END AS zone
+        #             FROM TaskEvent AS te
+        #             JOIN filtered_tasks AS ft ON ft.task_id = te.task_id
+        #             WHERE te.target_type_id = 3
+        #             AND (
+        #                 (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20) OR
+        #                 (te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20) OR
+        #                 (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20) OR
+        #                 (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
+        #                 (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
+        #                 (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
+        #                 (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40)
+        #             );
+        #             """ (outdated on 11.21)
+        query = """-- Step 1: task_type = 1 AND robot_id IS NOT NULL인 task_id 찾기
                     WITH filtered_tasks AS (
                         SELECT task_id
                         FROM Task
@@ -876,41 +967,47 @@ class OrchardGUI(QMainWindow):
                     )
 
                     -- Step 2: 해당 task_id와 target_type_id = 3인 TaskEvent 레코드 찾기
-                    SELECT distinct
-
-                        CASE 
-                            WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A4'
-                            WHEN te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A5'
-                            WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A6'
-                            WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A1'
-                            WHEN te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A2'
-                            WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A3'
-
-                            WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B4'
-                            WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B5'
-                            WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B6'
-                            WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B1'
-                            WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B2'
-                            WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B3'
+                    SELECT DISTINCT
+                        CASE
+                            WHEN te.robot_x > 1.3 AND te.robot_x <= 1.676 AND te.robot_y > 0.525 AND te.robot_y <= 0.825 THEN 'A1'
+                            WHEN te.robot_x > 1.3 AND te.robot_x <= 1.676 AND te.robot_y > 0.825 AND te.robot_y <= 1.175 THEN 'A2'
+                            WHEN te.robot_x > 1.676 AND te.robot_x <= 1.926 AND te.robot_y > 1.175 AND te.robot_y <= 1.475 THEN 'A3'
+                            WHEN te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > 1.175 AND te.robot_y <= 1.475 THEN 'A4'
+                            WHEN te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > 0.825 AND te.robot_y <= 1.175 THEN 'A5'
+                            WHEN te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > 0.525 AND te.robot_y <= 0.825 THEN 'A6'
+                            WHEN te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > 0.35 AND te.robot_y <= 0.525 THEN 'A7'
+                            WHEN te.robot_x > 1.676 AND te.robot_x <= 1.926 AND te.robot_y > 0.35 AND te.robot_y <= 0.525 THEN 'A8'
+                            WHEN te.robot_x > 1.401 AND te.robot_x <= 1.701 AND te.robot_y > -0.475 AND te.robot_y <= -0.175 THEN 'B1'
+                            WHEN te.robot_x > 1.401 AND te.robot_x <= 1.701 AND te.robot_y > -0.175 AND te.robot_y <= 0.15 THEN 'B2'
+                            WHEN te.robot_x > 1.701 AND te.robot_x <= 1.926 AND te.robot_y > 0.15 AND te.robot_y <= 0.35 THEN 'B3'
+                            WHEN te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > 0.15 AND te.robot_y <= 0.35 THEN 'B4'
+                            WHEN te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > -0.175 AND te.robot_y <= 0.15 THEN 'B5'
+                            WHEN te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > -0.475 AND te.robot_y <= -0.175 THEN 'B6'
+                            WHEN te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > -0.775 AND te.robot_y <= -0.475 THEN 'B7'
+                            WHEN te.robot_x > 1.701 AND te.robot_x <= 1.926 AND te.robot_y > -0.775 AND te.robot_y <= -0.475 THEN 'B8'
                         END AS zone
                     FROM TaskEvent AS te
                     JOIN filtered_tasks AS ft ON ft.task_id = te.task_id
                     WHERE te.target_type_id = 3
                     AND (
-                        (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20) OR
-                        (te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20) OR
-                        (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20) OR
-                        (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
-                        (te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
-                        (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
-                        (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
-                        (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
-                        (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
-                        (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40) OR
-                        (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40) OR
-                        (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40)
+                        (te.robot_x > 1.3 AND te.robot_x <= 1.676 AND te.robot_y > 0.525 AND te.robot_y <= 0.825) OR
+                        (te.robot_x > 1.3 AND te.robot_x <= 1.676 AND te.robot_y > 0.825 AND te.robot_y <= 1.175) OR
+                        (te.robot_x > 1.676 AND te.robot_x <= 1.926 AND te.robot_y > 1.175 AND te.robot_y <= 1.475) OR
+                        (te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > 1.175 AND te.robot_y <= 1.475) OR
+                        (te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > 0.825 AND te.robot_y <= 1.175) OR
+                        (te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > 0.525 AND te.robot_y <= 0.825) OR
+                        (te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > 0.35 AND te.robot_y <= 0.525) OR
+                        (te.robot_x > 1.676 AND te.robot_x <= 1.926 AND te.robot_y > 0.35 AND te.robot_y <= 0.525) OR
+                        (te.robot_x > 1.401 AND te.robot_x <= 1.701 AND te.robot_y > -0.475 AND te.robot_y <= -0.175) OR
+                        (te.robot_x > 1.401 AND te.robot_x <= 1.701 AND te.robot_y > -0.175 AND te.robot_y <= 0.15) OR
+                        (te.robot_x > 1.701 AND te.robot_x <= 1.926 AND te.robot_y > 0.15 AND te.robot_y <= 0.35) OR
+                        (te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > 0.15 AND te.robot_y <= 0.35) OR
+                        (te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > -0.175 AND te.robot_y <= 0.15) OR
+                        (te.robot_x > 2.151 AND te.robot_x <= 2.451 AND te.robot_y > -0.475 AND te.robot_y <= -0.175) OR
+                        (te.robot_x > 1.926 AND te.robot_x <= 2.151 AND te.robot_y > -0.775 AND te.robot_y <= -0.475) OR
+                        (te.robot_x > 1.701 AND te.robot_x <= 1.926 AND te.robot_y > -0.775 AND te.robot_y <= -0.475)
                     );
-                    """
+                        """
         area_done_list = self.gui_manager_node.request_DB_data(cc=0, query=query)
 
         A_polli_done=[]
@@ -946,7 +1043,51 @@ class OrchardGUI(QMainWindow):
         # bars = [self.scanprogressBar,]
         A_area_num = 8
         B_area_num = 8
-        query = """ -- Step 1: task_type = 0 AND robot_id IS NOT NULL인 task_id 찾기
+        # query = """ -- Step 1: task_type = 0 AND robot_id IS NOT NULL인 task_id 찾기
+        #             WITH filtered_tasks AS (
+        #                 SELECT task_id
+        #                 FROM Task
+        #                 WHERE task_type = 0
+        #                 AND robot_id IS NOT NULL
+        #             )
+
+        #             -- Step 2: 해당 task_id와 target_type_id = 3인 TaskEvent 레코드 찾기
+        #             SELECT distinct
+
+        #                 CASE 
+        #                     WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A4'
+        #                     WHEN te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A5'
+        #                     WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A6'
+        #                     WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A1'
+        #                     WHEN te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A2'
+        #                     WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A3'
+
+        #                     WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B4'
+        #                     WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B5'
+        #                     WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B6'
+        #                     WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B1'
+        #                     WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B2'
+        #                     WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B3'
+        #                 END AS zone
+        #             FROM TaskEvent AS te
+        #             JOIN filtered_tasks AS ft ON ft.task_id = te.task_id
+        #             WHERE te.target_type_id = 3
+        #             AND (
+        #                 (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20) OR
+        #                 (te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20) OR
+        #                 (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20) OR
+        #                 (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
+        #                 (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
+        #                 (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
+        #                 (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40) OR
+        #                 (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40)
+        #             );
+        #             """
+        query = """-- Step 1: task_type = 0 AND robot_id IS NOT NULL인 task_id 찾기
                     WITH filtered_tasks AS (
                         SELECT task_id
                         FROM Task
@@ -956,38 +1097,45 @@ class OrchardGUI(QMainWindow):
 
                     -- Step 2: 해당 task_id와 target_type_id = 3인 TaskEvent 레코드 찾기
                     SELECT distinct
-
                         CASE 
-                            WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A4'
-                            WHEN te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A5'
-                            WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20 THEN 'A6'
-                            WHEN te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A1'
-                            WHEN te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A2'
-                            WHEN te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40 THEN 'A3'
+                            WHEN te.robot_x > 1.3 AND te.robot_x < 1.676 AND te.robot_y > 0.525 AND te.robot_y < 0.825 THEN 'A1'
+                            WHEN te.robot_x > 1.3 AND te.robot_x < 1.676 AND te.robot_y > 0.825 AND te.robot_y < 1.175 THEN 'A2'
+                            WHEN te.robot_x > 1.676 AND te.robot_x < 1.926 AND te.robot_y > 1.175 AND te.robot_y < 1.475 THEN 'A3'
+                            WHEN te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > 1.175 AND te.robot_y < 1.475 THEN 'A4'
+                            WHEN te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > 0.825 AND te.robot_y < 1.175 THEN 'A5'
+                            WHEN te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > 0.525 AND te.robot_y < 0.825 THEN 'A6'
+                            WHEN te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > 0.35 AND te.robot_y < 0.525 THEN 'A7'
+                            WHEN te.robot_x > 1.676 AND te.robot_x < 1.926 AND te.robot_y > 0.35 AND te.robot_y < 0.525 THEN 'A8'
 
-                            WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B4'
-                            WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B5'
-                            WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20 THEN 'B6'
-                            WHEN te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B1'
-                            WHEN te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B2'
-                            WHEN te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40 THEN 'B3'
+                            WHEN te.robot_x > 1.401 AND te.robot_x < 1.701 AND te.robot_y > -0.475 AND te.robot_y < -0.175 THEN 'B1'
+                            WHEN te.robot_x > 1.401 AND te.robot_x < 1.701 AND te.robot_y > -0.175 AND te.robot_y < 0.15 THEN 'B2'
+                            WHEN te.robot_x > 1.701 AND te.robot_x < 1.926 AND te.robot_y > 0.15 AND te.robot_y < 0.35 THEN 'B3'
+                            WHEN te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > 0.15 AND te.robot_y < 0.35 THEN 'B4'
+                            WHEN te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > -0.175 AND te.robot_y < 0.15 THEN 'B5'
+                            WHEN te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > -0.475 AND te.robot_y < -0.175 THEN 'B6'
+                            WHEN te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > -0.775 AND te.robot_y < -0.475 THEN 'B7'
+                            WHEN te.robot_x > 1.701 AND te.robot_x < 1.926 AND te.robot_y > -0.775 AND te.robot_y < -0.475 THEN 'B8'
                         END AS zone
                     FROM TaskEvent AS te
                     JOIN filtered_tasks AS ft ON ft.task_id = te.task_id
                     WHERE te.target_type_id = 3
                     AND (
-                        (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 0 AND te.robot_y < 20) OR
-                        (te.robot_x >= 10 AND te.robot_x < 20 AND te.robot_y >= 0 AND te.robot_y < 20) OR
-                        (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 0 AND te.robot_y < 20) OR
-                        (te.robot_x >= 20 AND te.robot_x <= 30 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
-                        (te.robot_x >= 10 AND te.robot_x <= 20 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
-                        (te.robot_x >= 0 AND te.robot_x < 10 AND te.robot_y >= 20 AND te.robot_y <= 40) OR
-                        (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
-                        (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
-                        (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y >= 0 AND te.robot_y <= 20) OR
-                        (te.robot_x > 50 AND te.robot_x <= 60 AND te.robot_y > 20 AND te.robot_y <= 40) OR
-                        (te.robot_x > 40 AND te.robot_x <= 50 AND te.robot_y > 20 AND te.robot_y <= 40) OR
-                        (te.robot_x > 30 AND te.robot_x <= 40 AND te.robot_y > 20 AND te.robot_y <= 40)
+                        (te.robot_x > 1.3 AND te.robot_x < 1.676 AND te.robot_y > 0.525 AND te.robot_y < 0.825) OR
+                        (te.robot_x > 1.3 AND te.robot_x < 1.676 AND te.robot_y > 0.825 AND te.robot_y < 1.175) OR
+                        (te.robot_x > 1.676 AND te.robot_x < 1.926 AND te.robot_y > 1.175 AND te.robot_y < 1.475) OR
+                        (te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > 1.175 AND te.robot_y < 1.475) OR
+                        (te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > 0.825 AND te.robot_y < 1.175) OR
+                        (te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > 0.525 AND te.robot_y < 0.825) OR
+                        (te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > 0.35 AND te.robot_y < 0.525) OR
+                        (te.robot_x > 1.676 AND te.robot_x < 1.926 AND te.robot_y > 0.35 AND te.robot_y < 0.525) OR
+                        (te.robot_x > 1.401 AND te.robot_x < 1.701 AND te.robot_y > -0.475 AND te.robot_y < -0.175) OR
+                        (te.robot_x > 1.401 AND te.robot_x < 1.701 AND te.robot_y > -0.175 AND te.robot_y < 0.15) OR
+                        (te.robot_x > 1.701 AND te.robot_x < 1.926 AND te.robot_y > 0.15 AND te.robot_y < 0.35) OR
+                        (te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > 0.15 AND te.robot_y < 0.35) OR
+                        (te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > -0.175 AND te.robot_y < 0.15) OR
+                        (te.robot_x > 2.151 AND te.robot_x < 2.451 AND te.robot_y > -0.475 AND te.robot_y < -0.175) OR
+                        (te.robot_x > 1.926 AND te.robot_x < 2.151 AND te.robot_y > -0.775 AND te.robot_y < -0.475) OR
+                        (te.robot_x > 1.701 AND te.robot_x < 1.926 AND te.robot_y > -0.775 AND te.robot_y < -0.475)
                     );
                     """
         area_done_list = self.gui_manager_node.request_DB_data(cc=0, query=query) # return [['A1'],['A2'],['B1']]
@@ -1181,6 +1329,7 @@ class OrchardGUI(QMainWindow):
     def display_log(self):
         # combined_results = self.retrieve_from_database()
         print("IM in display_log!!!!!!")
+        # test_query for dummy data
         query = """ select 
         CASE 
             WHEN robot_x > 0 AND robot_x < 20 AND robot_y > 0 AND robot_y < 40 THEN 'A'
@@ -1203,6 +1352,42 @@ class OrchardGUI(QMainWindow):
         from TaskEvent
         where event_datetime >= DATE_ADD(NOW(), INTERVAL -1 MONTH) limit 5;
                     """
+        # real query
+        # query = """SELECT 
+        #             CASE 
+        #                 WHEN robot_x > 1.3 AND robot_x < 2.451 AND robot_y > 0.35 AND robot_y < 1.475 THEN 'A'
+        #                 WHEN robot_x > 1.401 AND robot_x < 2.451 AND robot_y > -0.775 AND robot_y < 0.35 THEN 'B'
+        #                 ELSE 'Unknown'
+        #             END AS region,
+                    
+        #             DATE_FORMAT(event_datetime, '%H:%i') AS time,  -- 시간을 hh:mm 형식으로 변환
+                    
+        #             CASE 
+        #                 WHEN robot_x > 1.3 AND robot_x < 1.676 AND robot_y > 0.525 AND robot_y < 0.825 THEN 'A1'
+        #                 WHEN robot_x > 1.3 AND robot_x < 1.676 AND robot_y > 0.825 AND robot_y < 1.175 THEN 'A2'
+        #                 WHEN robot_x > 1.676 AND robot_x < 1.926 AND robot_y > 1.175 AND robot_y < 1.475 THEN 'A3'
+        #                 WHEN robot_x > 1.926 AND robot_x < 2.151 AND robot_y > 1.175 AND robot_y < 1.475 THEN 'A4'
+        #                 WHEN robot_x > 2.151 AND robot_x < 2.451 AND robot_y > 0.825 AND robot_y < 1.175 THEN 'A5'
+        #                 WHEN robot_x > 2.151 AND robot_x < 2.451 AND robot_y > 0.525 AND robot_y < 0.825 THEN 'A6'
+        #                 WHEN robot_x > 1.926 AND robot_x < 2.151 AND robot_y > 0.35 AND robot_y < 0.525 THEN 'A7'
+        #                 WHEN robot_x > 1.676 AND robot_x < 1.926 AND robot_y > 0.35 AND robot_y < 0.525 THEN 'A8'
+
+        #                 WHEN robot_x > 1.401 AND robot_x < 1.701 AND robot_y > -0.475 AND robot_y < -0.175 THEN 'B1'
+        #                 WHEN robot_x > 1.401 AND robot_x < 1.701 AND robot_y > -0.175 AND robot_y < 0.15 THEN 'B2'
+        #                 WHEN robot_x > 1.701 AND robot_x < 1.926 AND robot_y > 0.15 AND robot_y < 0.35 THEN 'B3'
+        #                 WHEN robot_x > 1.926 AND robot_x < 2.151 AND robot_y > 0.15 AND robot_y < 0.35 THEN 'B4'
+        #                 WHEN robot_x > 2.151 AND robot_x < 2.451 AND robot_y > -0.175 AND robot_y < 0.15 THEN 'B5'
+        #                 WHEN robot_x > 2.151 AND robot_x < 2.451 AND robot_y > -0.475 AND robot_y < -0.175 THEN 'B6'
+        #                 WHEN robot_x > 1.926 AND robot_x < 2.151 AND robot_y > -0.775 AND robot_y < -0.475 THEN 'B7'
+        #                 WHEN robot_x > 1.701 AND robot_x < 1.926 AND robot_y > -0.775 AND robot_y < -0.475 THEN 'B8'
+                        
+        #                 ELSE 'Unknown' -- 범위에 맞지 않는 경우를 대비한 기본값
+        #             END AS location,
+
+        #             target_type_id AS obstacle -- 장애물 정보는 그대로 표시
+        #         FROM TaskEvent
+        #         WHERE event_datetime >= DATE_ADD(NOW(), INTERVAL -1 MONTH) 
+        #         LIMIT 5;"""
         result_list = self.gui_manager_node.request_DB_data(cc=0,query =query)
         
         self.logchart_table = QTableWidget()
