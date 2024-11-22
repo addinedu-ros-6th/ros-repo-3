@@ -14,7 +14,7 @@ find_package(xacro REQUIRED)
 
 # 설치할 디렉토리 설정
 install(
-  DIRECTORY launch urdf rviz config meshes
+  DIRECTORY launch urdf rviz meshes
   DESTINATION share/${PROJECT_NAME}
 )
 
