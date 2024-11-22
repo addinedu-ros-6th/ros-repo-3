@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pollibot">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+    <xacro:arg name="ros2_control_hardware_type" default="mock_components" />
+
+    <xacro:include filename="$(find pollibot_arm_description)/urdf/pollibot_arm.urdf" />
+
+    <xacro:include filename="$(find pollibot_moveit_config)/config/pollibot.ros2_control.xacro" />
+
+    <xacro:pollibot_ros2_control name="mock_components" 
+            initial_positions_file="$(arg initial_positions_file)"/>
+</robot>

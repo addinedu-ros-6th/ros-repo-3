@@ -1,0 +1,53 @@
+# pollibot_arm:
+#   kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+#   kinematics_solver_search_resolution: 0.005
+#   kinematics_solver_timeout: 0.1
+#   kinematics_solver_attempts: 3
+#   position_error: 0.05
+#   orientation_error: 0.1
+#   position_only_ik: True
+#   use_sim_time: false
+
+# pollibot_arm:
+#   kinematics_solver: trac_ik_kinematics_plugin/TRAC_IKKinematicsPlugin
+#   kinematics_solver_timeout: 1.0
+#   solve_type: Speed
+#   position_error: 0.05
+#   orientation_error: 0.1
+#   position_only_ik: True
+
+pollibot_arm:
+    kinematics_solver: pick_ik/PickIkPlugin
+    kinematics_solver_timeout: 0.05
+    kinematics_solver_attempts: 3
+    mode: global
+    position_scale: 1.0
+    rotation_scale: 0.5
+    position_threshold: 0.05
+    orientation_threshold: 3.14
+    cost_threshold: 0.01
+    minimal_displacement_weight: 0.0
+    gd_step_size: 0.05
+
+# ros__parameters:
+#   robot_description_kinematics:
+#     pollibot_arm:
+#       kinematics_solver: trac_ik_kinematics_plugin/TRAC_IKKinematicsPlugin
+#       kinematics_solver_timeout: 1.0
+#       solve_type: Speed
+#       position_error: 0.05
+#       orientation_error: 0.1
+#       position_only_ik: True
+
+# ros__parameters:
+#   robot_description_kinematics:
+#     pollibot_arm:
+#       kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+#       kinematics_solver_search_resolution: 0.005
+#       kinematics_solver_timeout: 0.1
+#       kinematics_solver_attempts: 3
+#       position_error: 0.05
+#       orientation_error: 0.1
+#       position_only_ik: True
+#       use_sim_time: false
+      
