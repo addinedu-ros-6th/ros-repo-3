@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>GroupBox</string>
+    <string/>
    </property>
    <widget class="QLabel" name="moni1_work">
     <property name="geometry">
@@ -141,6 +141,14 @@
      <string>TextLabel</string>
     </property>
    </widget>
+   <zorder>moni1_drive</zorder>
+   <zorder>moni1_work</zorder>
+   <zorder>polli1_drive</zorder>
+   <zorder>polli1_work</zorder>
+   <zorder>label_6</zorder>
+   <zorder>label_7</zorder>
+   <zorder>label_8</zorder>
+   <zorder>label_5</zorder>
   </widget>
  </widget>
  <resources/>

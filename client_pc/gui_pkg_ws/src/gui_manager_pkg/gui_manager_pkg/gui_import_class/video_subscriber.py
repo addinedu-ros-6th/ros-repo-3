@@ -57,15 +57,17 @@ from cv_bridge import CvBridge
 from rclpy.node import Node
 import rclpy
 from sensor_msgs.msg import Image as ROSImage
-
+from sensor_msgs.msg import CompressedImage
+import numpy as np
+import cv2
 
 class ImageSubscriber(Node):
     def __init__(self):
         super().__init__('video_subscriber')
-        self.moni1_drive_sub = self.create_subscription(ROSImage,'/camera1',self.listener_callback1,10)
-        self.moni1_work_sub = self.create_subscription(ROSImage,'/camera2',self.listener_callback2,10)
-        self.polli1_drive_sub = self.create_subscription(ROSImage,'/camera3',self.listener_callback3,10)
-        self.polli1_work_sub = self.create_subscription(ROSImage,'/camera4',self.listener_callback4,10)
+        self.moni1_drive_sub = self.create_subscription(CompressedImage,'/monibot/obstacle_camera',self.listener_callback1,10)
+        self.moni1_work_sub = self.create_subscription(CompressedImage,'/monibot/tree_camera',self.listener_callback2,10)
+        self.polli1_drive_sub = self.create_subscription(CompressedImage,'/pollibot/obstacle_camera',self.listener_callback3,10)
+        self.polli1_work_sub = self.create_subscription(CompressedImage,'/pollibot/flower_camera',self.listener_callback4,10)
 
         # self.subscription  # prevent unused variable warning
         self.bridge = CvBridge()
@@ -113,8 +115,8 @@ class amclSubscriber(Node,QObject):
         # super().__init__('amcl_subscriber')
         Node.__init__(self,'amcl_subscriber')
         QObject.__init__(self)
-        self.pollibot_pose_subscription = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose',self.listener_callback,10)
-        self.monibot_pose_subscription = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose',self.listener_callback2,10)
+        self.pollibot_pose_subscription = self.create_subscription(PoseWithCovarianceStamped, '/pollibot/amcl_pose',self.listener_callback,10)
+        self.monibot_pose_subscription = self.create_subscription(PoseWithCovarianceStamped, '/monibot/amcl_pose',self.listener_callback2,10)
         self.pose=None
     def listener_callback2(self,msg):
         self.pose2 = msg

@@ -123,7 +123,7 @@ class OrchardGUI(QMainWindow):
         # 타이머 관리
         self.init_timers(self.get_weather_data, 300000) # 날씨 타이머
         # self.init_timers(self.update_dynamic_plot, 1000) # 다이나믹 플롯 타이머
-        self.init_timers(self.add_pie_chart, 86400000) #파이차트 타이머
+        self.init_timers(self.add_pie_chart, 10000) #파이차트 타이머
         # self.init_timers(self.tree_labels, 10000) # 트리 라벨 타이머
         self.home_btn_1.click() # 시작하자마자 홈버튼 클릭해서 흰색 활성화
         # self.scanstart_btn.clicked.connect(self.send_scanControl)
@@ -180,6 +180,9 @@ class OrchardGUI(QMainWindow):
 
         self.update_disease_state()
         self.update_pollinated_num()
+
+        self.init_timers(self.update_disease_state,1000)
+        self.init_timers(self.update_pollinated_num,1000)
 
         self.get_robot_status()
         self.init_timers(self.get_robot_status, 1000)
@@ -412,8 +415,8 @@ class OrchardGUI(QMainWindow):
             # self.move_button((520,620),"polli")
 
 
-        # else:
-        #     self.move_button((int(pose.pose.pose.position.x*-5.06 + 394.48),int(pose.pose.pose.position.y*-5.07 -0.4)),"moni") # 파라미터 수정 필요
+        else:
+            self.move_button((int(x*(-152.135)-y*1.769+489.378),int(5.937*x-216.985*y+610.652)),"moni") # 파라미터 수정 필요      y +바꿈
         
         
         # self.move_button(int(monibot_pose.pose.pose.position.x*-124)+460,int(monibot_pose.pose.pose.position.y*-200)+500)
@@ -432,9 +435,9 @@ class OrchardGUI(QMainWindow):
         print(new_position)
         # self.test_moving_btn.move(*new_position)
         if flag == "polli":
-            self.monibot_test_icon.move(*new_position)
-        else:
             self.pollibot_test_icon.move(*new_position)
+        else:
+            self.monibot_test_icon.move(*new_position)
         # 다음 위치로 인덱스 업데이트
         # self.position_index = (self.position_index + 1) % len(self.positions)
 
@@ -639,25 +642,26 @@ class OrchardGUI(QMainWindow):
         self.expected_apple_label.setText(str(total_pollinate_num*1.5))
     def add_pie_chart(self):
         #### send db requeset
-        query = """ select SUM(CASE
-                WHEN robot_x BETWEEN 10 AND 15
-                AND robot_y BETWEEN 15 AND 25
-                AND target_type_id = 1
-                Then 1
-                Else 0
-                End) AS condition1_count, 
-                SUM(CASE 
-                WHEN robot_x > 15 
-                AND robot_y > 20 AND robot_y <= 40 
-                AND target_type_id = 2
-                THEN 1 
-                ELSE 0 
-                END) AS condition2_count
-                from TaskEvent
-                where event_datetime >= DATE_ADD(NOW(), INTERVAL -1 MONTH)
+        query = """ SELECT 
+                        SUM(CASE
+                            WHEN robot_x BETWEEN 1.3 AND 2.451
+                            AND robot_y BETWEEN -0.775 AND 1.475
+                            AND target_type_id = 4
+                            THEN 1
+                            ELSE 0
+                        END) AS condition1_count, 
+                        SUM(CASE 
+                            WHEN robot_x BETWEEN 1.3 AND 2.451 
+                            AND robot_y BETWEEN -0.775 AND 1.475
+                            AND target_type_id = 5
+                            THEN 1 
+                            ELSE 0 
+                        END) AS condition2_count
+                    FROM TaskEvent
+                    WHERE event_datetime >= NOW() - INTERVAL 1 MONTH;
                     """
         result_list = self.gui_manager_node.request_DB_data(cc=0,query = query)
-        total = 8
+        total = 16
         disease1 = int(result_list[0][0])
         disease2 = int(result_list[0][1])
         disease1_percent = disease1/total*100
@@ -704,7 +708,7 @@ class OrchardGUI(QMainWindow):
         chart.addSeries(outer_series)
 
         for slice_ in outer_series.slices():
-            color = 'black' if slice_.percentage() > 0.1 else 'white'
+            color = 'black' if slice_.percentage() > 0.0 else 'white'
             # label = f"<p font='NanumSquareRound ExtraBold' align='left' style='color:{color}'>{slice_.label()}<br>{round(slice_.percentage() * 100)}%</p>"
             label = f"<p style='font-family:NanumSquareRound ExtraBold; font-size:8pt; color:{color};'>{slice_.label()}<br>{round(slice_.percentage() * 100)}%</p>"
             slice_.setLabelPosition(QPieSlice.LabelOutside)

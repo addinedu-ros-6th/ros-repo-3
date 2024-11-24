@@ -11,7 +11,7 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import QTimer, Qt
 import rclpy
 
-from_class = uic.loadUiType("/home/zeki/applecare_ws/src/applecare_gui_pkg/applecare_gui_pkg/cctv_viewer2.ui")[0]
+from_class = uic.loadUiType("src/gui_manager_pkg/gui_manager_pkg/cctv_viewer2.ui")[0]
 ############################## jpg로 변환 필요!!!!!!!!!!!!!!!!!!!!!! (11.13)
 class CctvViewer(QtWidgets.QDialog) :
     def __init__(self,video_node):
@@ -19,8 +19,9 @@ class CctvViewer(QtWidgets.QDialog) :
         # self.setupUi(self)
         # uic.loadUiType("/home/zeki/applecare_ws/src/applecare_gui_pkg/applecare_gui_pkg/cctv_viewer.ui")[0]
         self.video_node = video_node
-        self.setWindowTitle("Hello, Qt!")
-        uic.loadUi('/home/zeki/applecare_ws/src/applecare_gui_pkg/applecare_gui_pkg/cctv_viewer2.ui', self)
+        
+        uic.loadUi('src/gui_manager_pkg/gui_manager_pkg/cctv_viewer2.ui', self)
+        self.setWindowTitle("Robot_Viewer")
         self.pixmap = QPixmap()
 
         self.timer = QTimer(self)
