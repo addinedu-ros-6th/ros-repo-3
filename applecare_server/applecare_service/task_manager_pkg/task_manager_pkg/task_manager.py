@@ -10,18 +10,21 @@ from gui_manager_msgs.msg import TaskRequest
 from gui_manager_msgs.msg import AreaDone
 from gui_manager_msgs.msg import TaskEvent
 # from task_topic_subscriber_class import TaskTopicSubscriber
+import numpy as np
 from datetime import datetime
 import ast
 import re
 import time
 from datetime import datetime
+import functools
 class TaskManager(Node):
     def __init__(self):
         super().__init__('task_manager_node')
+        self.all_done_subscriber = self.create_subscription(Int32,'all_done',self.all_done_callback,10)
         self.task_subscriber = self.create_subscription(TaskRequest,'gui/task_topic',self.task_topic_callback,10)
         self.event_subscriber = self.create_subscription(TaskEvent,'task_event',self.taskevent_callback,10)
         self.area_done_subscriber = self.create_subscription(AreaDone,'task_done',self.area_done_callback,10)
-        self.task_publisher_to_monibot1 = self.create_publisher(Int32,'monibot/task',10)
+        self.task_publisher_to_monibot1 = self.create_publisher(Int32,'monibot/zone_selection',10)
         # self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'pollibot/task',10)
         self.task_publisher_to_pollibot1 = self.create_publisher(Int32,'pollibot/zone_selection',10)
         self.task_msg_data = None
@@ -34,6 +37,14 @@ class TaskManager(Node):
         self.timer2 = self.create_timer(20, self.get_scheduled_task)
         self.timer = self.create_timer(5.0, self.check_scheduled_time)
         # self.check_scheduled_time()
+
+    def all_done_callback(self,msg):
+        robot_id = msg.data
+        query =f""" update Task set robot_id = null where robot_id = {robot_id}"""
+        request = DBCommand.Request()
+        request.cc = 1
+        request.query = query
+        self.dbmanager_client.call_async(request)
 
     def get_scheduled_task(self):
         print("$$%$%$%$")
@@ -286,6 +297,7 @@ class TaskManager(Node):
 
         if robot_id == 1:
             print("monibot1 publish")
+            print(task_command.data)
             self.task_publisher_to_monibot1.publish(task_command)
             # cc = 1 # insert into
             # table = "Task"
@@ -337,7 +349,6 @@ class TaskManager(Node):
             print("&&&&&&&&&&&&&&7")
             print(task_command)
             print("%%%%%%%%%%%%%%%%")
-        # 퍼블리시를 했으니 해당 task에 대해서 추가를 하거나, 로봇 아이디 할당. TaskRow도 업데이트 필요.
             
             query = f""" insert into Task (task_type, robot_id, scheduled_time, actual_start_time)
                         values ({self.job_type}, {robot_id},'{datetime.now().replace(microsecond=0)}','{datetime.now().replace(microsecond=0)}');
@@ -568,7 +579,28 @@ class TaskManager(Node):
         request = DBCommand.Request()
         request.cc = 1
         request.query = query
-        self.dbmanager_client.call_async(request)
+        future =self.dbmanager_client.call_async(request)
+    #     future.add_done_callback(functools.partial(self.check_all_task_done,robot_id=robot_id))
+    # def check_all_task_done(self,future,robot_id):
+    #     query = f"""SELECT 
+    #                     t.task_id,
+    #                     tr.row_id,
+    #                     tr.task_result
+    #                 FROM Task t
+    #                 JOIN TaskRow tr ON t.task_id = tr.task_id
+    #                 WHERE t.robot_id = {robot_id};"""
+    #     request = DBCommand.Request()
+    #     request.cc = 0
+    #     request.query=query
+    #     future=self.dbmanager_client.call_async(request)
+    #     future.add_done_callback(self)
+    def robot_task_score(self,task_type,robot_type,robot_x,robot_y,start_x,start_y):
+        score = np.sqrt((start_x-robot_x)**2 + (start_y-robot_y)**2)
+        if task_type == robot_type:
+            return score
+        else:
+            return score * 0
+        
 def main():
     rclpy.init()
     
