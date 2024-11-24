@@ -32,6 +32,10 @@ class DB_manager_server(Node):
     #     db_result = self.cursor.fetchall()
     #     print(db_result)
     #     print("--------------------------")
+    # def add_sample_diseases(self):
+
+
+    #  --------------------^^^^ testing functions ^^^^--------------------------------------------------
     # DB login function
     def connect_to_database(self):
         if not self.connection_to_database:
