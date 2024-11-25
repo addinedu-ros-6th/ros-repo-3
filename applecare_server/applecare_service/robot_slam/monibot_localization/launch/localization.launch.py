@@ -106,7 +106,7 @@ def generate_launch_description():
         use_sim_time_arg,
         ekf_filter,
         map_publisher,
-        # custom_amcl,
-        amcl_node,
+        custom_amcl,
+        # amcl_node,
         rviz_node,
     ])
