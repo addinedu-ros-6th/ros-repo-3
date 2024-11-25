@@ -13,7 +13,7 @@
 <br>
 
 ## 💡 선정 배경 및 프로젝트 개요 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/47b99d2d-8f81-41ab-99a5-99b11ad04f2b"  width="600" height="300"/>
+
 
 - 농업은 노동집약적인 산업으로, 고령화가 진행됨에 따라 로봇을 활용한 자동화 시스템의 필요성이 점점 커지고 있다.
 - 이에 따라 과수원의 작물을 효율적이고 체계적으로 관리하기 위해 딥러닝 기반 모니터링 시스템을 구축하고자 한다.
@@ -34,21 +34,15 @@
 <br>
 
 # Project 설계
-## 기능 리스트
-|Function|Description|
-|----|----|
-|로봇 별 주행 기능|로봇 별 작업 수행을 위한 주행|
-|장애물 인식시 정지 및 회피 기능|동적, 정적 장애물 감지 시 정지/회피|
-|다중 로봇 충돌 회피 기능|로봇들간 충돌 방지를 위해 회피 주행|
-|사과나무 잎 상태 인식 기능|잎의 이상 (병충해) 상태를 파악|
-|인공수분 가능 여부 파악 기능|꽃의 개화 정도를 기반으로 파악|
-|인공수분 완료 여부 파악 기능|개화한 꽃에 색상 변화감지로 파악|
-|사과 꽃 수분 상태 인식 기능|수분 가능, 불가능, 완료 상태로 분별|
-|인공 수분 작업 기능|수분 가능한 상태의 꽃만 수분 작업|
+## 주요 기능
+![Screenshot from 2024-11-25 16-42-00](https://github.com/user-attachments/assets/a8cece99-72e1-4dbf-9e40-0b43db7087db)
+
 
 <br>
 
 ## 시스템 구성도
+![system archi](https://github.com/user-attachments/assets/9a7919cd-231f-4a1b-a611-9a26a574c232)
+
 <br>
 
 # Project 구현
@@ -61,6 +55,8 @@
 <br>
 
 ## 시연 영상
+[![Watch the video](https://github.com/user-attachments/assets/b7a44a12-9dce-41e1-a2d6-25faca158897)](https://drive.google.com/file/d/1BeP4UkzlXkB0JqUldjMkZ-8K5f8Dldo8/view?usp=sharing)
+
 
 <br>
 
@@ -70,9 +66,9 @@
 |----|-----|
 |이재훈 <br> (팀장)| | 
 |이은휘| |
-|김제백| | 
-|고선민| |
+|이경민| | 
 |이시원| |
+|고선민| |
 
 
 <br>
